@@ -13,11 +13,13 @@ import {
   Hand
 } from 'lucide-react';
 import { schoolInfo } from '../data/initialData';
+import NotifyModal from './NotifyModal';
 
 export default function Navbar({ isMenuOpen = false }) {
   const [daysToExam, setDaysToExam] = useState(0);
   const [activeTool, setActiveTool] = useState('cursor');
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isNotifyModalOpen, setIsNotifyModalOpen] = useState(false);
 
   // Real-time Smooth Spring Scroll Progress
   const { scrollY, scrollYProgress } = useScroll();
@@ -169,14 +171,22 @@ export default function Navbar({ isMenuOpen = false }) {
             transition={{ type: 'spring', stiffness: 220, damping: 18, delay: 0.12 }}
             className="flex items-center gap-2 sm:gap-3"
           >
-            {/* STPM Countdown Pill */}
-            <motion.div 
-              whileHover={{ scale: 1.04, rotate: [-1, 1, 0] }}
-              className="hidden sm:flex items-center gap-1.5 bg-[#fef08a] border-2 border-black px-3 py-1.5 rounded-xl text-xs font-mono-clean text-black font-extrabold shadow-[3px_3px_0px_#000000] cursor-default"
+            {/* STPM Countdown Pill with Notify Me trigger */}
+            <motion.button 
+              type="button"
+              onClick={() => setIsNotifyModalOpen(true)}
+              title="Tetapkan peringatan peperiksaan STPM Sem 1"
+              whileHover={{ scale: 1.05, y: -1, rotate: [-1, 1, 0] }}
+              whileTap={{ scale: 0.95 }}
+              className="hidden sm:flex items-center gap-2 bg-[#fef08a] hover:bg-[#fde047] border-2 border-black px-3 py-1.5 rounded-xl text-xs font-mono-clean text-black font-extrabold shadow-[3px_3px_0px_#000000] cursor-pointer transition-colors"
             >
-              <Clock className="w-3.5 h-3.5 animate-pulse text-red-600" />
+              <Clock className="w-3.5 h-3.5 animate-pulse text-red-600 shrink-0" />
               <span>STPM Sem 1: <strong className="text-red-600 underline">{daysToExam}d left</strong></span>
-            </motion.div>
+              <span className="flex items-center gap-1 bg-red-500 text-white text-[9px] px-1.5 py-0.5 rounded border border-black shadow-[1px_1px_0px_#000]">
+                <Bell className="w-2.5 h-2.5 fill-white" />
+                <span>NOTIFY</span>
+              </span>
+            </motion.button>
 
             {/* Stacked Right Actions: Drop a Note on top, Menu + directly below with clean spacing */}
             <div className="flex flex-col items-end gap-2 w-32 sm:w-36">
@@ -197,6 +207,12 @@ export default function Navbar({ isMenuOpen = false }) {
           </motion.div>
         </div>
       </motion.header>
+
+      {/* STPM Exam Countdown & Reminder Modal */}
+      <NotifyModal
+        isOpen={isNotifyModalOpen}
+        onClose={() => setIsNotifyModalOpen(false)}
+      />
     </>
   );
 }

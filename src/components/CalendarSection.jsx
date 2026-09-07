@@ -1,15 +1,43 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   CalendarDays, 
-  ChevronRight, 
   Calendar as CalendarIcon,
-  Sparkles
+  Bell,
+  Download,
+  CheckCircle2
 } from 'lucide-react';
 import { calendarEvents } from '../data/initialData';
+import { downloadAllEventsIcs } from '../lib/calendarUtils';
+import NotifyModal from './NotifyModal';
 
 export default function CalendarSection() {
   const [selectedCategory, setSelectedCategory] = useState('ALL');
+  const [activeModalEvent, setActiveModalEvent] = useState(null);
+  const [notifiedMap, setNotifiedMap] = useState({});
+
+  useEffect(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem('chung_hwa_notified_events') || '{}');
+      setNotifiedMap(saved);
+    } catch {}
+  }, []);
+
+  const toggleEventNotification = (ev, e) => {
+    if (e) e.stopPropagation();
+    setActiveModalEvent(ev);
+
+    // Save mark to localStorage
+    try {
+      const updated = { ...notifiedMap, [ev.id]: true };
+      setNotifiedMap(updated);
+      localStorage.setItem('chung_hwa_notified_events', JSON.stringify(updated));
+    } catch {}
+  };
+
+  const handleDownloadAll = () => {
+    downloadAllEventsIcs(calendarEvents);
+  };
 
   const categories = [
     { id: 'ALL', label: 'All Events', bg: 'bg-black text-white' },
@@ -40,14 +68,27 @@ export default function CalendarSection() {
             <h2 className="text-2xl sm:text-4xl font-black text-black tracking-tight uppercase">
               Form 6 Desk Planner
             </h2>
-            <p className="mt-1 text-slate-700 font-bold text-xs sm:text-sm">
-              Color-coded master schedule covering STPM examinations, coursework submission dates, council meetings, and holidays.
+            <p className="mt-1 text-slate-700 font-bold text-xs sm:text-sm max-w-2xl">
+              Jadual rasmi berwarna merangkumi peperiksaan STPM, tarikh akhir penghantaran kerja kursus (PBS), mesyuarat Majlis PETINAM, dan cuti sekolah.
             </p>
           </div>
 
-          <div className="flex items-center gap-2 text-xs font-mono-clean font-black text-black bg-[#fef08a] px-3.5 py-2 rounded-xl border-2 border-black shadow-[3px_3px_0px_#000000] self-start md:self-auto">
-            <span className="w-2.5 h-2.5 rounded-full bg-red-600 animate-ping"></span>
-            <span>ACADEMIC CALENDAR 2026/2027</span>
+          {/* Header Action Buttons */}
+          <div className="flex flex-wrap items-center gap-2.5 self-start md:self-auto">
+            {/* Sync All Button */}
+            <button
+              onClick={handleDownloadAll}
+              title="Muat turun seluruh takwim sekolah ke Apple / Google / Outlook Calendar"
+              className="neo-btn bg-[#67e8f9] hover:bg-[#38bdf8] text-black text-xs font-mono-clean font-black px-3.5 py-2 rounded-xl shadow-[3px_3px_0px_#000] gap-1.5 cursor-pointer"
+            >
+              <Download className="w-3.5 h-3.5 stroke-[2.5]" />
+              <span>Sync Kalendar (.ics)</span>
+            </button>
+
+            <div className="flex items-center gap-2 text-xs font-mono-clean font-black text-black bg-[#fef08a] px-3.5 py-2 rounded-xl border-2 border-black shadow-[3px_3px_0px_#000000]">
+              <span className="w-2.5 h-2.5 rounded-full bg-red-600 animate-ping"></span>
+              <span>SESI 2026/2027</span>
+            </div>
           </div>
         </div>
 
@@ -74,56 +115,98 @@ export default function CalendarSection() {
         {/* Calendar Events Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <AnimatePresence>
-            {filteredEvents.map((ev) => (
-              <motion.div
-                key={ev.id}
-                layout
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ duration: 0.25 }}
-                whileHover={{ y: -4, x: -3 }}
-                className="neo-card p-6 bg-white border-3 border-black flex flex-col justify-between"
-              >
-                <div>
-                  {/* Category Tag & Date */}
-                  <div className="flex items-center justify-between mb-3.5">
-                    <span className="text-xs font-black px-2.5 py-0.5 rounded-md border-2 border-black bg-[#fef08a] text-black shadow-[1.5px_1.5px_0px_#000]">
-                      {ev.category}
-                    </span>
+            {filteredEvents.map((ev) => {
+              const isNotified = notifiedMap[ev.id];
 
-                    <div className="flex items-center gap-1.5 text-xs font-mono-clean font-black text-black bg-slate-100 px-2.5 py-1 rounded-md border-2 border-black shadow-[1.5px_1.5px_0px_#000]">
-                      <CalendarIcon className="w-3.5 h-3.5" />
-                      <span>{ev.date}</span>
+              return (
+                <motion.div
+                  key={ev.id}
+                  layout
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.25 }}
+                  whileHover={{ y: -4, x: -3 }}
+                  className="neo-card p-6 bg-white border-3 border-black flex flex-col justify-between transition-all"
+                >
+                  <div>
+                    {/* Category Tag & Date */}
+                    <div className="flex items-center justify-between mb-3.5">
+                      <span className="text-xs font-black px-2.5 py-0.5 rounded-md border-2 border-black bg-[#fef08a] text-black shadow-[1.5px_1.5px_0px_#000]">
+                        {ev.category}
+                      </span>
+
+                      <div className="flex items-center gap-1.5 text-xs font-mono-clean font-black text-black bg-slate-100 px-2.5 py-1 rounded-md border-2 border-black shadow-[1.5px_1.5px_0px_#000]">
+                        <CalendarIcon className="w-3.5 h-3.5" />
+                        <span>{ev.date}</span>
+                      </div>
                     </div>
+
+                    {/* Title */}
+                    <h3 className="text-base sm:text-lg font-black text-black leading-snug hover:text-blue-700 transition-colors">
+                      {ev.title}
+                    </h3>
+
+                    {/* Description */}
+                    <p className="mt-2 text-xs sm:text-sm text-slate-700 font-semibold leading-relaxed">
+                      {ev.description}
+                    </p>
                   </div>
 
-                  {/* Title */}
-                  <h3 className="text-base sm:text-lg font-black text-black leading-snug hover:text-blue-700 transition-colors">
-                    {ev.title}
-                  </h3>
+                  {/* Footer status & Notify Me Action */}
+                  <div className="mt-6 pt-3.5 border-t-2 border-black flex items-center justify-between gap-2 text-xs font-mono-clean font-bold">
+                    <span className="text-slate-500 text-[11px] truncate">
+                      Registry: SMCH
+                    </span>
 
-                  {/* Description */}
-                  <p className="mt-2 text-xs sm:text-sm text-slate-700 font-semibold leading-relaxed">
-                    {ev.description}
-                  </p>
-                </div>
+                    <div className="flex items-center gap-2">
+                      {/* NOTIFY ME BUTTON */}
+                      <button
+                        type="button"
+                        onClick={(e) => toggleEventNotification(ev, e)}
+                        title="Tetapkan peringatan / notify me untuk acara ini"
+                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border-2 border-black text-xs font-black transition-all cursor-pointer shadow-[2px_2px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 ${
+                          isNotified
+                            ? 'bg-[#4ade80] text-black hover:bg-[#22c55e]'
+                            : 'bg-[#fef08a] text-black hover:bg-[#fde047]'
+                        }`}
+                      >
+                        {isNotified ? (
+                          <>
+                            <CheckCircle2 className="w-3.5 h-3.5 stroke-[2.5]" />
+                            <span>Notified</span>
+                          </>
+                        ) : (
+                          <>
+                            <Bell className="w-3.5 h-3.5 stroke-[2.5]" />
+                            <span>Notify Me</span>
+                          </>
+                        )}
+                      </button>
 
-                {/* Footer status */}
-                <div className="mt-6 pt-3 border-t-2 border-black flex items-center justify-between text-xs font-mono-clean font-bold">
-                  <span className="text-slate-500">
-                    Registry: SMCH Kelantan
-                  </span>
-                  <span className="text-black font-extrabold flex items-center gap-0.5 hover:underline cursor-pointer">
-                    Details ➔
-                  </span>
-                </div>
-              </motion.div>
-            ))}
+                      <button
+                        type="button"
+                        onClick={(e) => toggleEventNotification(ev, e)}
+                        className="text-black font-extrabold flex items-center gap-0.5 hover:underline cursor-pointer text-xs"
+                      >
+                        Details ➔
+                      </button>
+                    </div>
+                  </div>
+                </motion.div>
+              );
+            })}
           </AnimatePresence>
         </div>
 
       </div>
+
+      {/* Reusable Notify & Event Detail Modal */}
+      <NotifyModal
+        isOpen={Boolean(activeModalEvent)}
+        onClose={() => setActiveModalEvent(null)}
+        eventData={activeModalEvent}
+      />
     </section>
   );
 }
