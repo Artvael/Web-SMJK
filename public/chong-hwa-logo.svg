@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 240" width="100%" height="100%">
+  <!-- Definitions for Gradients and Shadows -->
+  <defs>
+    <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e3a8a" />
+      <stop offset="50%" stop-color="#1d4ed8" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="50%" stop-color="#eab308" />
+      <stop offset="100%" stop-color="#ca8a04" />
+    </linearGradient>
+    <linearGradient id="torchGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ef4444" />
+      <stop offset="35%" stop-color="#f97316" />
+      <stop offset="80%" stop-color="#facc15" />
+      <stop offset="100%" stop-color="#ffffff" />
+    </linearGradient>
+    <filter id="badgeShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#000" flood-opacity="0.25" />
+    </filter>
+  </defs>
+
+  <!-- Outer Traditional Shield Base -->
+  <path d="M 20,20 L 180,20 Q 180,140 100,215 Q 20,140 20,20 Z" 
+        fill="url(#shieldGrad)" 
+        stroke="url(#goldGrad)" 
+        stroke-width="5" 
+        filter="url(#badgeShadow)" />
+
+  <!-- Inner Inverted Golden Triangle (Traditional Chinese School Symbol) -->
+  <polygon points="35,35 165,35 100,165" 
+           fill="#ffffff" 
+           stroke="url(#goldGrad)" 
+           stroke-width="3" />
+
+  <!-- Inner Blue Central Core -->
+  <polygon points="50,45 150,45 100,145" 
+           fill="#1e3a8a" />
+
+  <!-- Chinese Characters 中华 (Chong Hwa) in Gold -->
+  <text x="100" y="78" 
+        font-family="'Plus Jakarta Sans', 'Noto Serif SC', serif" 
+        font-weight="900" 
+        font-size="28" 
+        fill="url(#goldGrad)" 
+        text-anchor="middle" 
+        letter-spacing="2">中华</text>
+
+  <!-- Torch of Knowledge (Obor Ilmu) -->
+  <!-- Torch Flame -->
+  <path d="M 100,85 C 93,98 94,106 97,112 C 98,114 100,116 100,116 C 100,116 102,114 103,112 C 106,106 107,98 100,85 Z" 
+        fill="url(#torchGrad)" />
+  <circle cx="100" cy="105" r="3" fill="#ffffff" />
+
+  <!-- Torch Handle Base -->
+  <polygon points="96,116 104,116 102,126 98,126" 
+           fill="url(#goldGrad)" />
+
+  <!-- School Motto: 礼 义 廉 耻 (Li, Yi, Lian, Chi) along bottom curves -->
+  <g font-family="'Plus Jakarta Sans', sans-serif" font-size="11" font-weight="800" fill="#fef08a" text-anchor="middle">
+    <text x="50" y="180">礼</text>
+    <text x="78" y="195">义</text>
+    <text x="122" y="195">廉</text>
+    <text x="150" y="180">耻</text>
+  </g>
+
+  <!-- Bottom Ribbon Banner with SMJK CHONG HWA -->
+  <g transform="translate(0, 10)">
+    <rect x="25" y="200" width="150" height="24" rx="5" 
+          fill="#0f172a" 
+          stroke="url(#goldGrad)" 
+          stroke-width="2" />
+    <text x="100" y="216" 
+          font-family="'Space Grotesk', 'Plus Jakarta Sans', sans-serif" 
+          font-size="10" 
+          font-weight="800" 
+          fill="#ffffff" 
+          letter-spacing="1" 
+          text-anchor="middle">SMJK CHONG HWA</text>
+  </g>
+
+  <!-- Est 1919 Star / Year Badge at Top -->
+  <circle cx="100" cy="18" r="14" fill="#0f172a" stroke="url(#goldGrad)" stroke-width="2" />
+  <text x="100" y="22" 
+        font-family="'Space Grotesk', monospace" 
+        font-size="8" 
+        font-weight="700" 
+        fill="#fef08a" 
+        text-anchor="middle">1919</text>
+</svg>

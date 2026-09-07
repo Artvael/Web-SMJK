@@ -1,0 +1,206 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    --font-hand: 'Caveat', cursive;
+    --font-mono: 'Space Grotesk', monospace;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background-color: #fdfbf7;
+    color: #0f172a;
+    overflow-x: hidden;
+  }
+
+  #root {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    text-align: left;
+    max-width: 100%;
+    border: none;
+  }
+}
+
+/* ============================================================
+   FIGMA NEOBRUTALIST CANVAS & DOT MATRIX
+   ============================================================ */
+.figma-neo-canvas {
+  background-color: #fcfaf5;
+  background-image: 
+    radial-gradient(#64748b 1.5px, transparent 1.5px);
+  background-size: 26px 26px;
+}
+
+.figma-blueprint-grid {
+  background-color: #ffffff;
+  background-image: 
+    linear-gradient(to right, rgba(0, 0, 0, 0.08) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.08) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* ============================================================
+   NEOBRUTALIST CARD & BUTTON UTILITIES (HARD SHADOWS & THICK BORDERS)
+   ============================================================ */
+.neo-card {
+  background: #ffffff;
+  border: 2.5px solid #000000;
+  box-shadow: 4px 4px 0px #000000;
+  border-radius: 16px;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.neo-card:hover {
+  transform: translate(-3px, -3px);
+  box-shadow: 7px 7px 0px #000000;
+}
+
+.neo-card-sm {
+  background: #ffffff;
+  border: 2px solid #000000;
+  box-shadow: 3px 3px 0px #000000;
+  border-radius: 12px;
+  transition: all 0.18s ease;
+}
+
+.neo-card-sm:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 5px 0px #000000;
+}
+
+.neo-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  border: 2px solid #000000;
+  box-shadow: 3px 3px 0px #000000;
+  border-radius: 12px;
+  transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+  user-select: none;
+}
+
+.neo-btn:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 5px 0px #000000;
+}
+
+.neo-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0px #000000;
+}
+
+/* Washi Tape Accent */
+.washi-tape {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-2deg);
+  width: 90px;
+  height: 24px;
+  background-color: rgba(254, 240, 138, 0.9);
+  border-left: 2px dashed rgba(0, 0, 0, 0.3);
+  border-right: 2px dashed rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  pointer-events: none;
+  z-index: 10;
+}
+
+.washi-tape-pink {
+  background-color: rgba(254, 205, 211, 0.9);
+  transform: translateX(-50%) rotate(2deg);
+}
+
+/* Rotating stamp badge */
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 20s linear infinite;
+}
+
+/* Floating bobbing animation */
+@keyframes bob {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(1deg);
+  }
+}
+
+.animate-bob {
+  animation: bob 4s ease-in-out infinite;
+}
+
+.animate-bob-delayed {
+  animation: bob 4.5s ease-in-out 1.5s infinite;
+}
+
+/* Infinite Marquee Animation */
+@keyframes marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  display: flex;
+  width: 200%;
+  animation: marquee 25s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* Handwritten font utility */
+.font-handwriting {
+  font-family: var(--font-hand);
+}
+
+.font-mono-clean {
+  font-family: var(--font-mono);
+}
+
+/* Highlighter Pen Marker Accent */
+.marker-highlight {
+  position: relative;
+  display: inline-block;
+  z-index: 1;
+}
+
+.marker-highlight::before {
+  content: "";
+  position: absolute;
+  left: -4px;
+  right: -4px;
+  bottom: 2px;
+  height: 48%;
+  background-color: #fde047;
+  border: 1px solid #000;
+  border-radius: 4px;
+  transform: rotate(-1deg);
+  z-index: -1;
+}
+
+.marker-highlight-cyan::before {
+  background-color: #67e8f9;
+}
+
+.marker-highlight-coral::before {
+  background-color: #f472b6;
+}
+
+.marker-highlight-lime::before {
+  background-color: #a3e635;
+}
