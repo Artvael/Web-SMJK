@@ -20,7 +20,9 @@ export const INITIAL_STUDENT_NOTES = [
     studentClass: 'Upper 6 Science 1 (6S1)',
     title: 'Penambahan Pendingin Hawa / Kipas di Bilik Belajar T6',
     message: 'Mohon dipertimbangkan penambahan pendingin hawa atau kipas angin tambahan di Bilik Belajar Tingkatan 6. Waktu tengah hari agak panas dan suasana ulangkaji sebelum peperiksaan STPM Semester 1 akan jauh lebih kondusif dan selesa untuk semua pelajar.',
-    status: '💬 Dalam Tindakan Exco',
+    status: '✅ Selesai & Dibalas',
+    adminReply: 'Terima kasih atas cadangan bernas Junaedi! Majlis PETINAM telah berbincang dengan Penolong Kanan Tingkatan 6 dan pihak pengurusan sekolah. Dua unit kipas berdiri tambahan telah diluluskan dan akan dipasang di bilik ulangkaji sebelum minggu peperiksaan bermula.',
+    adminRepliedAt: new Date(Date.now() - 3600000 * 8).toISOString(),
     likes: 19,
     created_at: new Date(Date.now() - 3600000 * 16).toISOString(),
   },
@@ -128,10 +130,15 @@ export function getStudentFeedback() {
       return INITIAL_STUDENT_NOTES;
     }
 
-    // Ensure Junaedi's note is always present in the collection if missing
-    const hasJunaedi = parsed.some(n => n.name && n.name.toLowerCase().includes('junaedi'));
-    if (!hasJunaedi) {
+    // Ensure Junaedi's note is always present and has the sample admin reply
+    const junaediIdx = parsed.findIndex(n => n.name && n.name.toLowerCase().includes('junaedi'));
+    if (junaediIdx === -1) {
       parsed.unshift(INITIAL_STUDENT_NOTES[0]);
+      localStorage.setItem('chung_hwa_feedback', JSON.stringify(parsed));
+    } else if (!parsed[junaediIdx].adminReply) {
+      parsed[junaediIdx].adminReply = INITIAL_STUDENT_NOTES[0].adminReply;
+      parsed[junaediIdx].adminRepliedAt = INITIAL_STUDENT_NOTES[0].adminRepliedAt;
+      parsed[junaediIdx].status = '✅ Selesai & Dibalas';
       localStorage.setItem('chung_hwa_feedback', JSON.stringify(parsed));
     }
 

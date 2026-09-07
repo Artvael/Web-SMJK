@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import confetti from 'canvas-confetti';
 import { 
@@ -29,6 +29,22 @@ export default function StudentVoice() {
   const refreshNotes = () => {
     setNotes(getStudentFeedback());
   };
+
+  // Automatically re-sync notes if admin replies or changes status in Admin Dashboard
+  useEffect(() => {
+    const handleSync = () => {
+      setNotes(getStudentFeedback());
+    };
+
+    window.addEventListener('feedback_updated', handleSync);
+    window.addEventListener('storage', handleSync);
+    window.addEventListener('focus', handleSync);
+    return () => {
+      window.removeEventListener('feedback_updated', handleSync);
+      window.removeEventListener('storage', handleSync);
+      window.removeEventListener('focus', handleSync);
+    };
+  }, []);
 
   const categories = [
     {

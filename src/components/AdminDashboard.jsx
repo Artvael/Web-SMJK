@@ -65,6 +65,7 @@ export default function AdminDashboard({ currentUser, onBackToSite, onLogout }) 
       const updated = notes.map((n) => (n.id === noteId ? { ...n, status: newStatus } : n));
       setNotes(updated);
       localStorage.setItem('chung_hwa_feedback', JSON.stringify(updated));
+      window.dispatchEvent(new Event('feedback_updated'));
     } catch (e) {
       console.warn('Failed to update status:', e);
     }
@@ -89,6 +90,7 @@ export default function AdminDashboard({ currentUser, onBackToSite, onLogout }) 
       });
       setNotes(updated);
       localStorage.setItem('chung_hwa_feedback', JSON.stringify(updated));
+      window.dispatchEvent(new Event('feedback_updated'));
       setReplyTextMap((prev) => ({ ...prev, [noteId]: '' }));
     } catch (e) {
       console.warn('Failed to save reply:', e);
@@ -102,6 +104,7 @@ export default function AdminDashboard({ currentUser, onBackToSite, onLogout }) 
       const updated = notes.filter((n) => n.id !== noteId);
       setNotes(updated);
       localStorage.setItem('chung_hwa_feedback', JSON.stringify(updated));
+      window.dispatchEvent(new Event('feedback_updated'));
     } catch (e) {
       console.warn('Failed to delete note:', e);
     }

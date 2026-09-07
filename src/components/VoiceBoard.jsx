@@ -337,7 +337,7 @@ export default function VoiceBoard({ notes = [], onLikeChange, highlightedNoteId
 
                         {/* Status badge from council */}
                         {note.status && (
-                          <span className="text-[9px] font-mono-clean font-bold px-1.5 py-0.5 bg-white/90 border border-black rounded text-black shadow-[1px_1px_0px_#000] truncate max-w-[130px]">
+                          <span className="text-[9px] font-mono-clean font-black px-2 py-0.5 bg-black text-[#fde047] border border-black rounded shadow-[1.5px_1.5px_0px_#000] truncate max-w-[150px]">
                             {note.status}
                           </span>
                         )}
@@ -349,9 +349,33 @@ export default function VoiceBoard({ notes = [], onLikeChange, highlightedNoteId
                       </h4>
 
                       {/* Message Body */}
-                      <p className="text-xs sm:text-sm text-slate-900 font-bold leading-relaxed mb-4 whitespace-pre-wrap bg-white/60 p-3 rounded-xl border border-black/80">
+                      <p className="text-xs sm:text-sm text-slate-900 font-bold leading-relaxed mb-3 whitespace-pre-wrap bg-white/60 p-3 rounded-xl border border-black/80">
                         “{note.message}”
                       </p>
+
+                      {/* Official PETINAM Admin Reply (If Replied) */}
+                      {note.adminReply && (
+                        <div className="mb-4 p-3.5 bg-[#fef08a] border-2.5 border-black rounded-xl text-black shadow-[3px_3px_0px_#000000] relative overflow-hidden">
+                          <div className="flex items-center justify-between gap-2 mb-1.5 pb-1 border-b border-black/20">
+                            <div className="flex items-center gap-1.5 text-[10px] font-mono-clean font-black text-black uppercase">
+                              <span className="text-sm">👑</span>
+                              <span>Balasan Rasmi PETINAM:</span>
+                            </div>
+                            <span className="text-[9px] font-mono-clean font-black bg-black text-[#fde047] px-1.5 py-0.2 rounded border border-black">
+                              ADMIN
+                            </span>
+                          </div>
+                          
+                          <p className="text-xs sm:text-[13px] text-slate-950 font-black leading-snug">
+                            “{note.adminReply}”
+                          </p>
+
+                          <div className="flex items-center justify-between text-[9px] font-mono-clean text-slate-800 font-extrabold mt-2 pt-1 border-t border-black/10">
+                            <span>Majlis Pentadbiran T6</span>
+                            <span className="text-emerald-700 font-black">✓ Sah Dibalas</span>
+                          </div>
+                        </div>
+                      )}
 
                       {/* Bottom Author & Class Footer with Like Heart */}
                       <div className="pt-3 border-t-2 border-black/40 flex items-center justify-between gap-2 mt-auto">
