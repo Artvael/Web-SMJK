@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence, useScroll, useSpring } from 'framer-motion';
+import { motion, useScroll, useSpring } from 'framer-motion';
 import { 
   BookOpen, 
   Calendar, 
@@ -10,12 +10,20 @@ import {
   Clock, 
   Sparkles,
   MousePointer2,
-  Hand
+  Hand,
+  LogIn,
+  LogOut
 } from 'lucide-react';
 import { schoolInfo } from '../data/initialData';
 import NotifyModal from './NotifyModal';
 
-export default function Navbar({ isMenuOpen = false }) {
+export default function Navbar({ 
+  isMenuOpen = false, 
+  currentUser, 
+  onOpenAuthModal, 
+  onNavigateToAdmin, 
+  onLogout 
+}) {
   const [daysToExam, setDaysToExam] = useState(0);
   const [activeTool, setActiveTool] = useState('cursor');
   const [isScrolled, setIsScrolled] = useState(false);
@@ -187,6 +195,55 @@ export default function Navbar({ isMenuOpen = false }) {
                 <span>NOTIFY</span>
               </span>
             </motion.button>
+
+            {/* Auth / Admin Button */}
+            {currentUser ? (
+              <div className="flex items-center gap-1.5">
+                {currentUser.role === 'admin' ? (
+                  <motion.button
+                    type="button"
+                    onClick={onNavigateToAdmin}
+                    whileHover={{ scale: 1.05, y: -1 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="flex items-center gap-1.5 bg-[#fef08a] hover:bg-[#fde047] border-2 border-black px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-mono-clean text-black font-black shadow-[2.5px_2.5px_0px_#000000] cursor-pointer"
+                    title="Buka Panel Pentadbir"
+                  >
+                    <Crown className="w-3.5 h-3.5 text-black animate-bounce shrink-0" />
+                    <span className="hidden md:inline">Panel Admin</span>
+                    <span className="md:hidden">Admin</span>
+                  </motion.button>
+                ) : (
+                  <div className="hidden sm:flex items-center gap-1.5 bg-white border-2 border-black px-2.5 py-1.5 rounded-xl text-xs font-mono-clean font-bold shadow-[2px_2px_0px_#000]">
+                    <span>{currentUser.avatar || '👨‍🎓'}</span>
+                    <span className="max-w-[70px] truncate">{currentUser.name}</span>
+                  </div>
+                )}
+
+                <motion.button
+                  type="button"
+                  onClick={onLogout}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="p-1.5 bg-white hover:bg-rose-50 border-2 border-black rounded-xl text-xs text-rose-600 shadow-[2px_2px_0px_#000] cursor-pointer"
+                  title={`Log keluar (${currentUser.name})`}
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                </motion.button>
+              </div>
+            ) : (
+              <motion.button
+                type="button"
+                onClick={onOpenAuthModal}
+                whileHover={{ scale: 1.05, y: -1 }}
+                whileTap={{ scale: 0.95 }}
+                className="flex items-center gap-1.5 bg-white hover:bg-[#fef08a] border-2 border-black px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-mono-clean text-black font-extrabold shadow-[2.5px_2.5px_0px_#000000] cursor-pointer transition-colors"
+                title="Log Masuk Portal (Email / Google)"
+              >
+                <LogIn className="w-3.5 h-3.5 text-black shrink-0" />
+                <span className="hidden sm:inline">Log Masuk</span>
+                <span className="sm:hidden">Login</span>
+              </motion.button>
+            )}
 
             {/* Stacked Right Actions: Drop a Note on top, Menu + directly below with clean spacing */}
             <div className="flex flex-col items-end gap-2 w-32 sm:w-36">

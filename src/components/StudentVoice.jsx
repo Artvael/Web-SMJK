@@ -9,6 +9,7 @@ import {
   ArrowDown
 } from 'lucide-react';
 import { submitStudentFeedback, getStudentFeedback } from '../lib/supabase';
+import { recordActivityLog } from '../lib/authStore';
 import VoiceBoard from './VoiceBoard';
 
 export default function StudentVoice() {
@@ -80,6 +81,18 @@ export default function StudentVoice() {
     };
 
     const res = await submitStudentFeedback(payload);
+
+    try {
+      recordActivityLog({
+        userName: payload.name,
+        userEmail: isAnonymous ? 'Anonymous' : (name.trim() ? `${name.toLowerCase().replace(/\s+/g, '')}@student.smjkchunghwa.edu.my` : 'Pelajar'),
+        role: 'student',
+        action: 'SUBMIT_FEEDBACK',
+        method: payload.category,
+      });
+    } catch {
+      // Ignore logging error
+    }
 
     setSubmitting(false);
     setSubmitted(true);

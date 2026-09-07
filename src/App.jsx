@@ -15,9 +15,20 @@ import UserCursor from './components/UserCursor';
 import CursorCustomizer from './components/CursorCustomizer';
 import StaggeredMenu from './components/StaggeredMenu';
 import ScrollReveal from './components/ScrollReveal';
-import { ArrowUp } from 'lucide-react';
+import AdminDashboard from './components/AdminDashboard';
+import AuthModal from './components/AuthModal';
+import { getCurrentUser, trackPageView, logoutUser } from './lib/authStore';
+import { ArrowUp, ArrowLeft } from 'lucide-react';
 
 export default function App() {
+  const [currentUser, setCurrentUser] = useState(() => getCurrentUser());
+  const [currentView, setCurrentView] = useState(() => {
+    if (typeof window !== 'undefined' && window.location.hash === '#admin') {
+      return 'admin';
+    }
+    return 'home';
+  });
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [scrollPercent, setScrollPercent] = useState(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -39,19 +50,147 @@ export default function App() {
     });
   }, [scrollYProgress]);
 
-  const scrollToTop = () => {
+  useEffect(() => {
+    // Record page view analytics
+    trackPageView();
+
+    const handleHashChange = () => {
+      if (window.location.hash === '#admin') {
+        setCurrentView('admin');
+      } else if (window.location.hash === '#login') {
+        setIsAuthModalOpen(true);
+      } else if (window.location.hash === '' || window.location.hash === '#home') {
+        setCurrentView('home');
+      }
+    };
+
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
+  const handleNavigateToAdmin = () => {
+    if (!currentUser) {
+      setIsAuthModalOpen(true);
+      return;
+    }
+    if (currentUser.role !== 'admin') {
+      setIsAuthModalOpen(true);
+      return;
+    }
+    window.location.hash = '#admin';
+    setCurrentView('admin');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const handleBackToSite = () => {
+    window.location.hash = '';
+    setCurrentView('home');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleLogout = () => {
+    logoutUser();
+    setCurrentUser(null);
+    if (currentView === 'admin') {
+      window.location.hash = '';
+      setCurrentView('home');
+    }
+  };
+
+  const menuItems = [
+    { label: 'Home', ariaLabel: 'Go to Home page', link: '#' },
+    { label: 'Academic Hub', ariaLabel: 'View STPM past-year notes & papers', link: '#academic' },
+    { label: 'Calendar', ariaLabel: 'View Form 6 Master Calendar', link: '#calendar' },
+    { label: 'Announcements', ariaLabel: 'View official bulletin notices', link: '#announcements' },
+    { label: 'PETINAM Council', ariaLabel: 'Meet the PETINAM committee & manifesto', link: '#petinam' },
+    { label: 'Student Voice', ariaLabel: 'Drop confidential feedback or appreciation', link: '#voice' },
+    { label: 'University Corner', ariaLabel: 'University guide & senior hub', link: '#university' },
+    ...(currentUser?.role === 'admin'
+      ? [{ label: '👑 Admin Panel', ariaLabel: 'Control Center & Analytics', link: '#admin' }]
+      : [{ label: '🔑 Login / Daftar', ariaLabel: 'Log masuk atau daftar akaun', link: '#login' }])
+  ];
+
+  if (currentView === 'admin') {
+    if (currentUser && currentUser.role === 'admin') {
+      return (
+        <div className="min-h-screen bg-[#F8F9FA] text-slate-800 font-sans selection:bg-[#fde047] selection:text-black relative">
+          <AdminDashboard
+            currentUser={currentUser}
+            onBackToSite={handleBackToSite}
+            onLogout={handleLogout}
+          />
+        </div>
+      );
+    }
+
+    return (
+      <div className="min-h-screen bg-[#F8F9FA] flex flex-col items-center justify-center p-4 selection:bg-[#fde047] selection:text-black">
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="neo-card bg-[#fffbeb] border-4 border-black p-8 sm:p-10 max-w-lg w-full text-center shadow-[8px_8px_0px_#000000] relative"
+        >
+          <div className="w-16 h-16 bg-[#fde047] border-3 border-black rounded-2xl flex items-center justify-center text-3xl mx-auto mb-4 shadow-[4px_4px_0px_#000]">
+            🔒
+          </div>
+          <span className="text-xs font-mono-clean font-black bg-black text-[#fde047] px-3 py-1 rounded border border-black uppercase tracking-wider">
+            KAWASAN TERHAD • PENTADBIR SAHAJA
+          </span>
+          <h2 className="text-2xl font-black text-black mt-3 mb-2 uppercase">
+            Panel Admin PETINAM
+          </h2>
+          <p className="text-sm text-slate-700 font-semibold mb-6">
+            Bahagian ini dikhaskan untuk pentadbir portal & Majlis Tertinggi Tingkatan 6 SMJK Chung Hwa. Sila log masuk dengan akaun pentadbir atau Google rasmi.
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+            <button
+              type="button"
+              onClick={() => setIsAuthModalOpen(true)}
+              className="neo-btn bg-[#fde047] hover:bg-[#facc15] text-black text-xs sm:text-sm px-6 py-3 w-full sm:w-auto font-black shadow-[3px_3px_0px_#000]"
+            >
+              🔑 Log Masuk Pentadbir
+            </button>
+            <button
+              type="button"
+              onClick={handleBackToSite}
+              className="neo-btn bg-white hover:bg-slate-100 text-black text-xs sm:text-sm px-6 py-3 w-full sm:w-auto font-bold shadow-[3px_3px_0px_#000]"
+            >
+              <ArrowLeft className="w-4 h-4 mr-1.5" />
+              <span>Kembali ke Web</span>
+            </button>
+          </div>
+        </motion.div>
+
+        <AuthModal
+          isOpen={isAuthModalOpen}
+          onClose={() => setIsAuthModalOpen(false)}
+          onAuthSuccess={(user) => {
+            setCurrentUser(user);
+            if (user.role === 'admin') {
+              setCurrentView('admin');
+            }
+          }}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex flex-col bg-[#F8F9FA] text-slate-800 font-sans selection:bg-[#fde047] selection:text-black relative">
-      {/* Top Navbar (renders portal destination #staggered-menu-portal directly below Drop a Note) */}
-      <Navbar isMenuOpen={isMenuOpen} />
+      {/* Top Navbar */}
+      <Navbar 
+        isMenuOpen={isMenuOpen} 
+        currentUser={currentUser}
+        onOpenAuthModal={() => setIsAuthModalOpen(true)}
+        onNavigateToAdmin={handleNavigateToAdmin}
+        onLogout={handleLogout}
+      />
 
       {/* Staggered Animated Menu (React Bits, Left Position) */}
       <StaggeredMenu
         position="left"
         isFixed={true}
+        items={menuItems}
         colors={['#fde047', '#38bdf8', '#f472b6']}
         accentColor="#e11d48"
         logoUrl="/smjk-chung-hwa-kelantan-logo.png"
@@ -62,7 +201,10 @@ export default function App() {
       {/* Main Content Sections with Neobrutalist Scroll Triggers */}
       <main className="flex-1 w-full">
         {/* 1. Hero Section (with 6 Quick Navigation Buttons & Figma Cursors) */}
-        <Hero />
+        <Hero 
+          currentUser={currentUser}
+          onNavigateToAdmin={handleNavigateToAdmin}
+        />
 
         {/* High-Energy Neobrutalist Infinite Running Marquee */}
         <InfiniteMarquee />
@@ -169,6 +311,19 @@ export default function App() {
           fullScreen={true}
         />
       )}
+
+      {/* Authentication Modal (Google Sign-In & Email/Password) */}
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        onAuthSuccess={(user) => {
+          setCurrentUser(user);
+          if (user.role === 'admin') {
+            window.location.hash = '#admin';
+            setCurrentView('admin');
+          }
+        }}
+      />
     </div>
   );
 }

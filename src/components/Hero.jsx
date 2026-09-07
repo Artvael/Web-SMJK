@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
 import { 
   BookOpen, 
@@ -12,13 +12,12 @@ import {
   Pin,
   Sparkles,
   Flame,
-  Star,
   ThumbsUp
 } from 'lucide-react';
 import { schoolInfo } from '../data/initialData';
 import FigmaCursors from './FigmaCursors';
 
-export default function Hero() {
+export default function Hero({ currentUser, onNavigateToAdmin }) {
   const [likes, setLikes] = useState(128);
   const [hasLiked, setHasLiked] = useState(false);
 
@@ -138,6 +137,50 @@ export default function Hero() {
             transition={{ duration: 0.4 }}
             className="lg:col-span-7 text-left"
           >
+            {/* Animated Welcome Admin Badge / Banner */}
+            <AnimatePresence>
+              {currentUser?.role === 'admin' && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.92, y: -16 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.92, y: -16 }}
+                  transition={{ type: 'spring', stiffness: 350, damping: 22 }}
+                  className="mb-5 p-4 rounded-2xl border-3 border-black bg-[#fef08a] shadow-[5px_5px_0px_#000000] flex flex-wrap items-center justify-between gap-3 relative overflow-hidden"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-black text-[#fde047] flex items-center justify-center text-xl shadow-[2px_2px_0px_#fde047] border border-black shrink-0 animate-bounce">
+                      👑
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] font-mono-clean font-black bg-black text-[#fde047] px-2 py-0.5 rounded border border-black uppercase">
+                          PETINAM ADMIN ACTIVE
+                        </span>
+                        <span className="text-[11px] font-extrabold text-slate-700 hidden sm:inline">
+                          • Kawalan Portal
+                        </span>
+                      </div>
+                      <h2 className="text-base sm:text-lg font-black text-black tracking-tight mt-0.5">
+                        Welcome Admin, {currentUser.name}!
+                      </h2>
+                      <p className="text-xs text-slate-700 font-bold">
+                        Pantau statistik pelawat, semak log pengguna & urus suara pelajar di panel khas.
+                      </p>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={onNavigateToAdmin}
+                    className="neo-btn bg-black hover:bg-slate-800 text-[#fde047] text-xs font-black px-4 py-2.5 shadow-[3px_3px_0px_#000000] cursor-pointer shrink-0 flex items-center gap-1.5 ml-auto sm:ml-0"
+                  >
+                    <span>Buka Panel Admin</span>
+                    <ArrowUpRight className="w-4 h-4 text-[#fde047]" />
+                  </button>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
             {/* Badges strip */}
             <div className="flex flex-wrap items-center gap-2 mb-4">
               <span className="inline-flex items-center gap-1.5 bg-[#a7f3d0] border-2 border-black text-black text-xs font-extrabold px-3 py-1 rounded-full shadow-[2px_2px_0px_#000000]">
