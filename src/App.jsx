@@ -50,6 +50,10 @@ export default function App() {
     });
   }, [scrollYProgress]);
 
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   useEffect(() => {
     // Record page view analytics
     trackPageView();
