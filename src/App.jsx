@@ -19,7 +19,7 @@ import GallerySection from './components/GallerySection';
 import AdminDashboard from './components/AdminDashboard';
 import AuthModal from './components/AuthModal';
 import { getCurrentUser, trackPageView, logoutUser } from './lib/authStore';
-import { ArrowUp, ArrowLeft } from 'lucide-react';
+import { ArrowUp, ArrowLeft, Sparkles } from 'lucide-react';
 
 export default function App() {
   const [currentUser, setCurrentUser] = useState(() => getCurrentUser());
@@ -304,6 +304,20 @@ export default function App() {
           </motion.button>
         )}
       </AnimatePresence>
+
+      {/* Floating "Drop a Note" Quick Action Button (Never crowds top navbar!) */}
+      <motion.a
+        href="#voice"
+        whileHover={{ scale: 1.05, y: -2 }}
+        whileTap={{ scale: 0.95 }}
+        className={`fixed bottom-6 z-40 px-3.5 py-2.5 rounded-2xl bg-[#67e8f9] hover:bg-[#38bdf8] text-black font-black text-xs border-2.5 border-black shadow-[3.5px_3.5px_0px_#000000] flex items-center gap-2 cursor-pointer transition-all select-none ${
+          showScrollTop ? 'right-20 sm:right-24' : 'right-6'
+        }`}
+        title="Hantar cadangan atau nota ke Papan Suara Pelajar"
+      >
+        <Sparkles className="w-4 h-4 text-black animate-spin-slow shrink-0" />
+        <span className="font-mono-clean font-black">Drop a Note</span>
+      </motion.a>
 
       {/* Customizer Dock for User Cursor */}
       <CursorCustomizer

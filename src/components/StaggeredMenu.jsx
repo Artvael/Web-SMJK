@@ -366,10 +366,10 @@ export const StaggeredMenu = ({
         );
       })()}
 
-      {/* Backdrop overlay for click-outside dismissal */}
+      {/* Backdrop overlay for click-outside dismissal (Crisp dim, no blur) */}
       {open && (
         <div
-          className="fixed inset-0 bg-black/40 backdrop-blur-xs z-10 pointer-events-auto cursor-pointer"
+          className="fixed inset-0 bg-black/35 z-10 pointer-events-auto cursor-pointer"
           onClick={closeMenu}
           aria-hidden="true"
         />

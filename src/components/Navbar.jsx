@@ -77,11 +77,11 @@ export default function Navbar({
         initial={{ y: -30, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ type: 'spring', stiffness: 200, damping: 20 }}
-        className={`fixed top-2 sm:top-3.5 left-0 right-0 z-70 px-3 sm:px-6 transition-all duration-200 pointer-events-none ${
-          isScrolled ? 'backdrop-blur-[8px] bg-white/50 py-1.5' : 'bg-transparent py-0.5'
+        className={`fixed top-2.5 sm:top-3.5 left-0 right-0 z-70 px-4 sm:px-8 transition-all duration-200 pointer-events-none ${
+          isScrolled && !isMenuOpen ? 'backdrop-blur-[6px] bg-white/50 py-1.5' : 'bg-transparent py-0.5'
         }`}
       >
-        <div className="max-w-7xl mx-auto flex items-center justify-between gap-2 sm:gap-4 pointer-events-auto">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-3 sm:gap-4 pointer-events-auto">
           
           {/* Left: School Crest + Brand in Neobrutalist Pill */}
           <motion.a 
@@ -247,24 +247,8 @@ export default function Navbar({
               </motion.button>
             )}
 
-            {/* Inline Right Actions: Drop a Note & Menu + Side by Side (Single Row, No Stacking!) */}
-            <div className="flex items-center gap-2 shrink-0">
-              {/* CTA: Drop a Note */}
-              <motion.a
-                href="#voice"
-                whileHover={{ y: -2, x: -1, boxShadow: '3.5px 3.5px 0px #000000' }}
-                whileTap={{ y: 1, x: 1, boxShadow: '1px 1px 0px #000000' }}
-                className="neo-btn bg-[#67e8f9] hover:bg-[#38bdf8] text-black text-xs font-black px-3 py-1.5 rounded-xl border-2 border-black shadow-[2.5px_2.5px_0px_#000000] flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
-                title="Hantar cadangan atau maklum balas ke Suara Pelajar"
-              >
-                <Sparkles className="w-3.5 h-3.5 text-black shrink-0 animate-spin-slow" />
-                <span className="hidden md:inline">Drop a Note</span>
-                <span className="md:hidden">Note</span>
-              </motion.a>
-
-              {/* Portal target for StaggeredMenu toggle button */}
-              <div id="staggered-menu-portal" className="flex items-center shrink-0" />
-            </div>
+            {/* Portal target for StaggeredMenu toggle button */}
+            <div id="staggered-menu-portal" className="flex items-center shrink-0 ml-1" />
           </motion.div>
         </div>
       </motion.header>
