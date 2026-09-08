@@ -270,7 +270,7 @@ export default function PetinamSection() {
               animate={{ opacity: 1 }}
               className="grid grid-cols-1 md:grid-cols-2 gap-5"
             >
-              {petinamTeam.manifestos.map((item, idx) => (
+              {(team.manifestos || []).map((item, idx) => (
                 <div 
                   key={idx} 
                   className="p-5 rounded-2xl bg-white border-2.5 border-black shadow-[3px_3px_0px_#000] flex items-start gap-3.5"
