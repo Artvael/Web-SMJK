@@ -16,6 +16,7 @@ import {
   Camera
 } from 'lucide-react';
 import { schoolInfo } from '../data/initialData';
+import { getCountdownConfig } from '../lib/contentStore';
 import NotifyModal from './NotifyModal';
 
 export default function Navbar({ 
@@ -25,6 +26,7 @@ export default function Navbar({
   onNavigateToAdmin, 
   onLogout 
 }) {
+  const [countdownConfig, setCountdownConfig] = useState(() => getCountdownConfig());
   const [daysToExam, setDaysToExam] = useState(0);
   const [activeTool, setActiveTool] = useState('cursor');
   const [isScrolled, setIsScrolled] = useState(false);
@@ -45,11 +47,19 @@ export default function Navbar({
   }, [scrollY]);
 
   useEffect(() => {
-    const examDate = new Date(schoolInfo.stpmCountdownDate);
-    const today = new Date();
-    const diffTime = examDate - today;
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    setDaysToExam(diffDays > 0 ? diffDays : 0);
+    const updateCountdown = () => {
+      const config = getCountdownConfig();
+      setCountdownConfig(config);
+      const examDate = new Date(config.targetDate);
+      const today = new Date();
+      const diffTime = examDate - today;
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      setDaysToExam(diffDays > 0 ? diffDays : 0);
+    };
+
+    updateCountdown();
+    window.addEventListener('content_updated', updateCountdown);
+    return () => window.removeEventListener('content_updated', updateCountdown);
   }, []);
 
   const navItems = [
@@ -179,21 +189,23 @@ export default function Navbar({
             initial={{ x: 25, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             transition={{ type: 'spring', stiffness: 220, damping: 18, delay: 0.12 }}
-            className="flex items-center gap-2 sm:gap-3"
+            className="flex items-center gap-2 sm:gap-3 shrink-0"
           >
             {/* STPM Countdown Pill with Notify Me trigger */}
             <motion.button 
               type="button"
               onClick={() => setIsNotifyModalOpen(true)}
-              title="Tetapkan peringatan peperiksaan STPM Sem 1"
+              title={`Tetapkan peringatan peperiksaan ${countdownConfig.examName || 'STPM'}`}
               whileHover={{ scale: 1.05, y: -1, rotate: [-1, 1, 0] }}
               whileTap={{ scale: 0.95 }}
-              className="hidden 2xl:flex items-center gap-2 bg-[#fef08a] hover:bg-[#fde047] border-2 border-black px-3 py-1.5 rounded-xl text-xs font-mono-clean text-black font-extrabold shadow-[2.5px_2.5px_0px_#000000] cursor-pointer transition-colors"
+              className="hidden xl:flex items-center gap-2 bg-[#fef08a] hover:bg-[#fde047] border-2 border-black px-3 py-1.5 rounded-xl text-xs font-mono-clean text-black font-extrabold shadow-[2.5px_2.5px_0px_#000000] cursor-pointer transition-colors whitespace-nowrap shrink-0"
             >
               <Clock className="w-3.5 h-3.5 animate-pulse text-red-600 shrink-0" />
-              <span>STPM Sem 1: <strong className="text-red-600 underline">{daysToExam}d left</strong></span>
-              <span className="flex items-center gap-1 bg-red-500 text-white text-[9px] px-1.5 py-0.5 rounded border border-black shadow-[1px_1px_0px_#000]">
-                <Bell className="w-2.5 h-2.5 fill-white" />
+              <span className="whitespace-nowrap shrink-0">
+                {countdownConfig.shortLabel || 'STPM'}: <strong className="text-red-600 underline">{daysToExam}d left</strong>
+              </span>
+              <span className="flex items-center gap-1 bg-red-500 text-white text-[9px] px-1.5 py-0.5 rounded border border-black shadow-[1px_1px_0px_#000] shrink-0 whitespace-nowrap font-black">
+                <Bell className="w-2.5 h-2.5 fill-white shrink-0" />
                 <span>NOTIFY</span>
               </span>
             </motion.button>
@@ -257,6 +269,16 @@ export default function Navbar({
       <NotifyModal
         isOpen={isNotifyModalOpen}
         onClose={() => setIsNotifyModalOpen(false)}
+        eventData={{
+          id: 'stpm-active-countdown',
+          title: countdownConfig.examName,
+          date: new Date(countdownConfig.targetDate).toLocaleDateString('en-MY', { day: 'numeric', month: 'short', year: 'numeric' }),
+          startDate: countdownConfig.targetDate,
+          endDate: countdownConfig.targetDate,
+          category: 'STPM Exam',
+          description: countdownConfig.description || 'Peperiksaan bertulis rasmi kendalian Majlis Peperiksaan Malaysia (MPM).',
+          location: 'Dewan Peperiksaan SMJK Chung Hwa Kelantan',
+        }}
       />
     </>
   );

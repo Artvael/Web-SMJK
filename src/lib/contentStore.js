@@ -333,3 +333,41 @@ export function deleteAnnouncement(id) {
   const announcements = getAnnouncements().filter((ann) => ann.id !== id);
   saveAnnouncements(announcements);
 }
+
+// -------------------------------------------------------------
+// 5. STPM COUNTDOWN CONFIG (CENTRALIZED & ADMIN-CONTROLLED)
+// -------------------------------------------------------------
+const COUNTDOWN_STORAGE_KEY = 'chung_hwa_stpm_countdown';
+
+export const DEFAULT_COUNTDOWN_CONFIG = {
+  examName: 'STPM Sem 3 (Tingkatan 6 Atas)',
+  shortLabel: 'STPM Sem 3',
+  targetDate: '2026-11-16T08:00:00',
+  description: 'Peperiksaan bertulis Semester 3 STPM (Kohort 2026) anjuran Majlis Peperiksaan Malaysia (MPM).',
+};
+
+export function getCountdownConfig() {
+  if (typeof window === 'undefined') return DEFAULT_COUNTDOWN_CONFIG;
+  try {
+    const raw = localStorage.getItem(COUNTDOWN_STORAGE_KEY);
+    if (!raw) {
+      localStorage.setItem(COUNTDOWN_STORAGE_KEY, JSON.stringify(DEFAULT_COUNTDOWN_CONFIG));
+      return DEFAULT_COUNTDOWN_CONFIG;
+    }
+    const parsed = JSON.parse(raw);
+    return parsed?.targetDate ? parsed : DEFAULT_COUNTDOWN_CONFIG;
+  } catch {
+    return DEFAULT_COUNTDOWN_CONFIG;
+  }
+}
+
+export function saveCountdownConfig(config) {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem(COUNTDOWN_STORAGE_KEY, JSON.stringify(config));
+    emitContentUpdate();
+  } catch (err) {
+    console.warn('Failed to save countdown config:', err);
+  }
+}
+

@@ -31,6 +31,11 @@ import AdminGalleryTab from './admin/AdminGalleryTab';
 import AdminPetinamTab from './admin/AdminPetinamTab';
 import AdminWeeklyTab from './admin/AdminWeeklyTab';
 import AdminAnnouncementsTab from './admin/AdminAnnouncementsTab';
+import { 
+  getCountdownConfig, 
+  saveCountdownConfig, 
+  DEFAULT_COUNTDOWN_CONFIG 
+} from '../lib/contentStore';
 
 export default function AdminDashboard({ currentUser, onBackToSite, onLogout }) {
   const [activeTab, setActiveTab] = useState('analytics'); // 'analytics' | 'users' | 'feedback' | 'calendar'
@@ -38,6 +43,25 @@ export default function AdminDashboard({ currentUser, onBackToSite, onLogout }) 
   const [userLogs, setUserLogs] = useState(() => getUserActivityLogs());
   const [registeredUsers, setRegisteredUsers] = useState(() => getRegisteredUsers());
   const [notes, setNotes] = useState(() => getStudentFeedback());
+  
+  // STPM Countdown Config state
+  const [countdownForm, setCountdownForm] = useState(() => getCountdownConfig());
+  const [countdownSavedMsg, setCountdownSavedMsg] = useState('');
+
+  const handleSaveCountdown = (e) => {
+    e.preventDefault();
+    saveCountdownConfig(countdownForm);
+    setCountdownSavedMsg('Tetapan Countdown STPM berjaya dikemaskini!');
+    setTimeout(() => setCountdownSavedMsg(''), 3000);
+  };
+
+  const handleApplyPreset = (preset) => {
+    setCountdownForm(preset);
+    saveCountdownConfig(preset);
+    setCountdownSavedMsg(`Preset "${preset.shortLabel}" berjaya digunakan!`);
+    setTimeout(() => setCountdownSavedMsg(''), 3000);
+  };
+
   const [calendarList, setCalendarList] = useState(() => {
     try {
       const saved = localStorage.getItem('chung_hwa_custom_events');
@@ -649,6 +673,144 @@ export default function AdminDashboard({ currentUser, onBackToSite, onLogout }) 
             transition={{ duration: 0.25 }}
             className="grid grid-cols-1 lg:grid-cols-3 gap-6"
           >
+            {/* Konfigurasi Countdown STPM (Top Bar Navbar & Notifikasi) */}
+            <div className="neo-card p-6 bg-[#fffbeb] border-3 border-black rounded-2xl shadow-[6px_6px_0px_#000] lg:col-span-3">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 mb-4 border-b-2 border-black">
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="p-1.5 bg-[#fde047] border border-black rounded-lg text-black">
+                      <Clock className="w-4 h-4 text-black" />
+                    </span>
+                    <h4 className="font-mono-clean font-black text-base uppercase text-black">
+                      Konfigurasi Hitung Mundur STPM (Countdown Navbar)
+                    </h4>
+                  </div>
+                  <p className="text-xs text-slate-700 font-bold">
+                    Pilih atau tetapkan peperiksaan sasaran (Semester 1, Semester 3, atau Percubaan) dan tarikh rasmi MPM yang terpapar pada navbar portal.
+                  </p>
+                </div>
+
+                {/* Live Preview of the Navbar Pill */}
+                <div className="flex items-center gap-2 bg-[#fef08a] border-2 border-black px-3.5 py-2 rounded-xl text-xs font-mono-clean text-black font-extrabold shadow-[2.5px_2.5px_0px_#000] shrink-0 whitespace-nowrap">
+                  <Clock className="w-3.5 h-3.5 text-red-600 animate-pulse shrink-0" />
+                  <span>
+                    {countdownForm.shortLabel || 'STPM'}: <strong className="text-red-600 underline">
+                      {Math.max(0, Math.ceil((new Date(countdownForm.targetDate) - new Date()) / (1000 * 60 * 60 * 24)))}d left
+                    </strong>
+                  </span>
+                  <span className="flex items-center gap-1 bg-red-500 text-white text-[9px] px-1.5 py-0.5 rounded border border-black font-black">
+                    <Bell className="w-2.5 h-2.5 fill-white shrink-0" />
+                    <span>NOTIFY</span>
+                  </span>
+                </div>
+              </div>
+
+              {/* Quick 1-Click Presets */}
+              <div className="mb-4">
+                <span className="text-[11px] font-mono-clean font-black text-black uppercase block mb-2">
+                  ⚡ Pilihan Pantas (Presets Takwim):
+                </span>
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    onClick={() => handleApplyPreset({
+                      examName: 'STPM 2026 Semester 3 (Tingkatan 6 Atas)',
+                      shortLabel: 'STPM Sem 3',
+                      targetDate: '2026-11-16T08:00:00',
+                      description: 'Peperiksaan bertulis Semester 3 STPM (Kohort 2026) anjuran Majlis Peperiksaan Malaysia (MPM).',
+                    })}
+                    className="neo-btn bg-white hover:bg-[#fde047] text-black text-xs font-bold px-3 py-1.5 shadow-[2px_2px_0px_#000]"
+                  >
+                    🔴 STPM Sem 3 (16 Nov 2026 • 68 hari)
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => handleApplyPreset({
+                      examName: 'STPM 2027 Semester 1 (Tingkatan 6 Rendah)',
+                      shortLabel: 'STPM Sem 1',
+                      targetDate: '2027-01-18T08:00:00',
+                      description: 'Peperiksaan bertulis Semester 1 STPM untuk kemasukan Tingkatan 6 Rendah anjuran MPM.',
+                    })}
+                    className="neo-btn bg-white hover:bg-[#bae6fd] text-black text-xs font-bold px-3 py-1.5 shadow-[2px_2px_0px_#000]"
+                  >
+                    🔵 STPM Sem 1 (18 Jan 2027 • ~132 hari)
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => handleApplyPreset({
+                      examName: 'Peperiksaan Percubaan STPM Kelantan (Trial)',
+                      shortLabel: 'Trial STPM',
+                      targetDate: '2026-10-12T08:00:00',
+                      description: 'Peperiksaan percubaan dalaman peringkat negeri bagi persediaan menghadapi STPM sebenar.',
+                    })}
+                    className="neo-btn bg-white hover:bg-[#fbcfe8] text-black text-xs font-bold px-3 py-1.5 shadow-[2px_2px_0px_#000]"
+                  >
+                    🟡 Percubaan STPM (12 Okt 2026 • ~34 hari)
+                  </button>
+                </div>
+              </div>
+
+              {countdownSavedMsg && (
+                <div className="mb-4 p-3 bg-emerald-100 border-2 border-black rounded-xl text-xs font-bold text-emerald-800 shadow-[2px_2px_0px_#000]">
+                  {countdownSavedMsg}
+                </div>
+              )}
+
+              {/* Form Custom Countdown */}
+              <form onSubmit={handleSaveCountdown} className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-[11px] font-mono-clean font-black text-black uppercase mb-1">
+                    Nama Penuh Peperiksaan
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={countdownForm.examName}
+                    onChange={(e) => setCountdownForm({ ...countdownForm, examName: e.target.value })}
+                    className="w-full bg-white px-3 py-2 rounded-xl border-2 border-black text-xs font-bold text-black focus:outline-none shadow-[2px_2px_0px_#000]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-mono-clean font-black text-black uppercase mb-1">
+                    Label Pendek di Navbar
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={countdownForm.shortLabel}
+                    onChange={(e) => setCountdownForm({ ...countdownForm, shortLabel: e.target.value })}
+                    placeholder="Contoh: STPM Sem 3"
+                    className="w-full bg-white px-3 py-2 rounded-xl border-2 border-black text-xs font-bold text-black focus:outline-none shadow-[2px_2px_0px_#000]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-mono-clean font-black text-black uppercase mb-1">
+                    Tarikh Sasaran Peperiksaan
+                  </label>
+                  <input
+                    type="date"
+                    required
+                    value={countdownForm.targetDate ? countdownForm.targetDate.split('T')[0] : ''}
+                    onChange={(e) => setCountdownForm({ ...countdownForm, targetDate: `${e.target.value}T08:00:00` })}
+                    className="w-full bg-white px-3 py-2 rounded-xl border-2 border-black text-xs font-bold text-black focus:outline-none shadow-[2px_2px_0px_#000]"
+                  />
+                </div>
+
+                <div className="sm:col-span-3 flex justify-end">
+                  <button
+                    type="submit"
+                    className="neo-btn bg-[#4ade80] hover:bg-emerald-400 text-black text-xs font-black py-2.5 px-5 shadow-[3px_3px_0px_#000]"
+                  >
+                    💾 Simpan Tetapan Countdown
+                  </button>
+                </div>
+              </form>
+            </div>
+
             {/* Form Tambah Acara Baharu */}
             <div className="neo-card p-6 bg-white border-3 border-black rounded-2xl shadow-[6px_6px_0px_#000] lg:col-span-1">
               <h4 className="font-mono-clean font-black text-base uppercase text-black mb-4 flex items-center gap-2">
