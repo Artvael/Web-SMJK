@@ -77,8 +77,8 @@ export default function Navbar({
         initial={{ y: -30, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ type: 'spring', stiffness: 200, damping: 20 }}
-        className={`fixed top-0 left-0 right-0 z-70 px-3 sm:px-6 py-2.5 transition-all duration-200 pointer-events-none ${
-          isScrolled ? 'backdrop-blur-[6px] bg-white/40' : 'bg-transparent'
+        className={`fixed top-2 sm:top-3.5 left-0 right-0 z-70 px-3 sm:px-6 transition-all duration-200 pointer-events-none ${
+          isScrolled ? 'backdrop-blur-[8px] bg-white/50 py-1.5' : 'bg-transparent py-0.5'
         }`}
       >
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-2 sm:gap-4 pointer-events-auto">
@@ -120,7 +120,7 @@ export default function Navbar({
             initial={{ y: -30, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ type: 'spring', stiffness: 220, damping: 18, delay: 0.1 }}
-            className={`hidden lg:flex items-center gap-1 bg-white border-2 border-black px-2 py-1.5 rounded-2xl transition-shadow ${
+            className={`hidden xl:flex items-center gap-1 bg-white border-2 border-black px-2 py-1.5 rounded-2xl transition-shadow ${
               isScrolled ? 'shadow-[5px_5px_0px_#000000]' : 'shadow-[4px_4px_0px_#000000]'
             }`}
           >
@@ -188,7 +188,7 @@ export default function Navbar({
               title="Tetapkan peringatan peperiksaan STPM Sem 1"
               whileHover={{ scale: 1.05, y: -1, rotate: [-1, 1, 0] }}
               whileTap={{ scale: 0.95 }}
-              className="hidden sm:flex items-center gap-2 bg-[#fef08a] hover:bg-[#fde047] border-2 border-black px-3 py-1.5 rounded-xl text-xs font-mono-clean text-black font-extrabold shadow-[3px_3px_0px_#000000] cursor-pointer transition-colors"
+              className="hidden 2xl:flex items-center gap-2 bg-[#fef08a] hover:bg-[#fde047] border-2 border-black px-3 py-1.5 rounded-xl text-xs font-mono-clean text-black font-extrabold shadow-[2.5px_2.5px_0px_#000000] cursor-pointer transition-colors"
             >
               <Clock className="w-3.5 h-3.5 animate-pulse text-red-600 shrink-0" />
               <span>STPM Sem 1: <strong className="text-red-600 underline">{daysToExam}d left</strong></span>
@@ -207,12 +207,12 @@ export default function Navbar({
                     onClick={onNavigateToAdmin}
                     whileHover={{ scale: 1.05, y: -1 }}
                     whileTap={{ scale: 0.95 }}
-                    className="flex items-center gap-1.5 bg-[#fef08a] hover:bg-[#fde047] border-2 border-black px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-mono-clean text-black font-black shadow-[2.5px_2.5px_0px_#000000] cursor-pointer"
+                    className="flex items-center gap-1.5 bg-[#fef08a] hover:bg-[#fde047] border-2 border-black px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-mono-clean text-black font-black shadow-[2.5px_2.5px_0px_#000000] cursor-pointer whitespace-nowrap"
                     title="Buka Panel Pentadbir"
                   >
                     <Crown className="w-3.5 h-3.5 text-black animate-bounce shrink-0" />
-                    <span className="hidden md:inline">Panel Admin</span>
-                    <span className="md:hidden">Admin</span>
+                    <span className="hidden sm:inline">Panel Admin</span>
+                    <span className="sm:hidden">Admin</span>
                   </motion.button>
                 ) : (
                   <div className="hidden sm:flex items-center gap-1.5 bg-white border-2 border-black px-2.5 py-1.5 rounded-xl text-xs font-mono-clean font-bold shadow-[2px_2px_0px_#000]">
@@ -238,7 +238,7 @@ export default function Navbar({
                 onClick={onOpenAuthModal}
                 whileHover={{ scale: 1.05, y: -1 }}
                 whileTap={{ scale: 0.95 }}
-                className="flex items-center gap-1.5 bg-white hover:bg-[#fef08a] border-2 border-black px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-mono-clean text-black font-extrabold shadow-[2.5px_2.5px_0px_#000000] cursor-pointer transition-colors"
+                className="flex items-center gap-1.5 bg-white hover:bg-[#fef08a] border-2 border-black px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-mono-clean text-black font-extrabold shadow-[2.5px_2.5px_0px_#000000] cursor-pointer transition-colors whitespace-nowrap"
                 title="Log Masuk Portal (Email / Google)"
               >
                 <LogIn className="w-3.5 h-3.5 text-black shrink-0" />
@@ -247,21 +247,23 @@ export default function Navbar({
               </motion.button>
             )}
 
-            {/* Stacked Right Actions: Drop a Note on top, Menu + directly below with clean spacing */}
-            <div className="flex flex-col items-end gap-2 w-32 sm:w-36">
+            {/* Inline Right Actions: Drop a Note & Menu + Side by Side (Single Row, No Stacking!) */}
+            <div className="flex items-center gap-2 shrink-0">
               {/* CTA: Drop a Note */}
               <motion.a
                 href="#voice"
-                whileHover={{ y: -2, x: -1, boxShadow: '4px 4px 0px #000000' }}
+                whileHover={{ y: -2, x: -1, boxShadow: '3.5px 3.5px 0px #000000' }}
                 whileTap={{ y: 1, x: 1, boxShadow: '1px 1px 0px #000000' }}
-                className="neo-btn bg-[#67e8f9] hover:bg-[#38bdf8] text-black text-xs font-extrabold px-3 py-1.5 w-full justify-center shadow-[2.5px_2.5px_0px_#000000]"
+                className="neo-btn bg-[#67e8f9] hover:bg-[#38bdf8] text-black text-xs font-black px-3 py-1.5 rounded-xl border-2 border-black shadow-[2.5px_2.5px_0px_#000000] flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
+                title="Hantar cadangan atau maklum balas ke Suara Pelajar"
               >
-                <Sparkles className="w-3.5 h-3.5 mr-1.5 text-black shrink-0 animate-spin-slow" />
-                <span>Drop a Note</span>
+                <Sparkles className="w-3.5 h-3.5 text-black shrink-0 animate-spin-slow" />
+                <span className="hidden md:inline">Drop a Note</span>
+                <span className="md:hidden">Note</span>
               </motion.a>
 
               {/* Portal target for StaggeredMenu toggle button */}
-              <div id="staggered-menu-portal" className="w-full flex justify-end" />
+              <div id="staggered-menu-portal" className="flex items-center shrink-0" />
             </div>
           </motion.div>
         </div>

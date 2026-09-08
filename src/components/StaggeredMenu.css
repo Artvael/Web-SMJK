@@ -75,9 +75,8 @@
   font-family: monospace, sans-serif;
   letter-spacing: 0.05em;
   line-height: 1;
-  overflow: visible;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
-  width: 100%;
+  width: auto;
+  white-space: nowrap;
 }
 
 .sm-toggle:hover {
