@@ -17,6 +17,7 @@ import {
   Camera,
   Crown,
   Clock,
+  Bell,
   BellRing
 } from 'lucide-react';
 import { 
@@ -694,8 +695,8 @@ export default function AdminDashboard({ currentUser, onBackToSite, onLogout }) 
                 <div className="flex items-center gap-2 bg-[#fef08a] border-2 border-black px-3.5 py-2 rounded-xl text-xs font-mono-clean text-black font-extrabold shadow-[2.5px_2.5px_0px_#000] shrink-0 whitespace-nowrap">
                   <Clock className="w-3.5 h-3.5 text-red-600 animate-pulse shrink-0" />
                   <span>
-                    {countdownForm.shortLabel || 'STPM'}: <strong className="text-red-600 underline">
-                      {Math.max(0, Math.ceil((new Date(countdownForm.targetDate) - new Date()) / (1000 * 60 * 60 * 24)))}d left
+                    {countdownForm?.shortLabel || 'STPM'}: <strong className="text-red-600 underline">
+                      {Math.max(0, Math.ceil(((new Date(countdownForm?.targetDate || '2026-11-16T08:00:00')).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))}d left
                     </strong>
                   </span>
                   <span className="flex items-center gap-1 bg-red-500 text-white text-[9px] px-1.5 py-0.5 rounded border border-black font-black">
