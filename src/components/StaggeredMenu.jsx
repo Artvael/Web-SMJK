@@ -402,10 +402,16 @@ export const StaggeredMenu = ({
                 <li className="sm-panel-itemWrap" key={it.label + idx}>
                   <a
                     className="sm-panel-item"
-                    href={it.link}
+                    href={it.link || '#'}
                     aria-label={it.ariaLabel}
                     data-index={idx + 1}
-                    onClick={closeMenu}
+                    onClick={(e) => {
+                      if (it.action) {
+                        e.preventDefault();
+                        it.action();
+                      }
+                      closeMenu();
+                    }}
                   >
                     <span className="sm-panel-itemLabel">{it.label}</span>
                   </a>

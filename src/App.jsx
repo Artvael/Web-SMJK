@@ -18,10 +18,12 @@ import ScrollReveal from './components/ScrollReveal';
 import GallerySection from './components/GallerySection';
 import AdminDashboard from './components/AdminDashboard';
 import AuthModal from './components/AuthModal';
+import Preloader from './components/Preloader';
 import { getCurrentUser, trackPageView, logoutUser } from './lib/authStore';
 import { ArrowUp, ArrowLeft, Sparkles } from 'lucide-react';
 
 export default function App() {
+  const [isLoading, setIsLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState(() => getCurrentUser());
   const [currentView, setCurrentView] = useState(() => {
     if (typeof window !== 'undefined' && window.location.hash === '#admin') {
@@ -111,6 +113,7 @@ export default function App() {
     { label: 'Memories Gallery', ariaLabel: 'View student life Polaroid gallery', link: '#gallery' },
     { label: 'Student Voice', ariaLabel: 'Drop confidential feedback or appreciation', link: '#voice' },
     { label: 'University Corner', ariaLabel: 'University guide & senior hub', link: '#university' },
+    { label: '🎬 Replay Intro', ariaLabel: 'Lihat semula animasi loading portal', link: '#', action: () => setIsLoading(true) },
     ...(currentUser?.role === 'admin'
       ? [{ label: '👑 Admin Panel', ariaLabel: 'Control Center & Analytics', link: '#admin' }]
       : [{ label: '🔑 Login / Daftar', ariaLabel: 'Log masuk atau daftar akaun', link: '#login' }])
@@ -120,6 +123,9 @@ export default function App() {
     if (currentUser && currentUser.role === 'admin') {
       return (
         <div className="min-h-screen bg-[#F8F9FA] text-slate-800 font-sans selection:bg-[#fde047] selection:text-black relative">
+          <AnimatePresence>
+            {isLoading && <Preloader onComplete={() => setIsLoading(false)} />}
+          </AnimatePresence>
           <AdminDashboard
             currentUser={currentUser}
             onBackToSite={handleBackToSite}
@@ -131,6 +137,9 @@ export default function App() {
 
     return (
       <div className="min-h-screen bg-[#F8F9FA] flex flex-col items-center justify-center p-4 selection:bg-[#fde047] selection:text-black">
+        <AnimatePresence>
+          {isLoading && <Preloader onComplete={() => setIsLoading(false)} />}
+        </AnimatePresence>
         <motion.div 
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -183,6 +192,13 @@ export default function App() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#F8F9FA] text-slate-800 font-sans selection:bg-[#fde047] selection:text-black relative">
+      {/* Neobrutalist Page Entrance Preloader Animation */}
+      <AnimatePresence mode="wait">
+        {isLoading && (
+          <Preloader onComplete={() => setIsLoading(false)} />
+        )}
+      </AnimatePresence>
+
       {/* Top Navbar */}
       <Navbar 
         isMenuOpen={isMenuOpen} 
