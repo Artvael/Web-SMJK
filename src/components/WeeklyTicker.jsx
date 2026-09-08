@@ -1,9 +1,24 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { CalendarCheck, MapPin, Clock, AlertCircle, Sparkles } from 'lucide-react';
-import { weeklyActivities } from '../data/initialData';
+import { getWeeklyActivities } from '../lib/contentStore';
 
 export default function WeeklyTicker() {
+  const [activities, setActivities] = useState(() => getWeeklyActivities());
+
+  useEffect(() => {
+    const handleSync = () => {
+      setActivities(getWeeklyActivities());
+    };
+    window.addEventListener('content_updated', handleSync);
+    window.addEventListener('storage', handleSync);
+    window.addEventListener('focus', handleSync);
+    return () => {
+      window.removeEventListener('content_updated', handleSync);
+      window.removeEventListener('storage', handleSync);
+      window.removeEventListener('focus', handleSync);
+    };
+  }, []);
   return (
     <section className="py-12 px-4 sm:px-6 bg-[#fcfaf5] border-b-4 border-black">
       <div className="max-w-7xl mx-auto">
@@ -35,7 +50,7 @@ export default function WeeklyTicker() {
 
         {/* 4 Weekly Activity Neobrutalist Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {weeklyActivities.map((act, index) => (
+          {activities.map((act, index) => (
             <motion.div
               key={act.id}
               initial={{ opacity: 0, y: 15 }}

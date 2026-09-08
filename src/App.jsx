@@ -15,6 +15,7 @@ import UserCursor from './components/UserCursor';
 import CursorCustomizer from './components/CursorCustomizer';
 import StaggeredMenu from './components/StaggeredMenu';
 import ScrollReveal from './components/ScrollReveal';
+import GallerySection from './components/GallerySection';
 import AdminDashboard from './components/AdminDashboard';
 import AuthModal from './components/AuthModal';
 import { getCurrentUser, trackPageView, logoutUser } from './lib/authStore';
@@ -107,6 +108,7 @@ export default function App() {
     { label: 'Calendar', ariaLabel: 'View Form 6 Master Calendar', link: '#calendar' },
     { label: 'Announcements', ariaLabel: 'View official bulletin notices', link: '#announcements' },
     { label: 'PETINAM Council', ariaLabel: 'Meet the PETINAM committee & manifesto', link: '#petinam' },
+    { label: 'Memories Gallery', ariaLabel: 'View student life Polaroid gallery', link: '#gallery' },
     { label: 'Student Voice', ariaLabel: 'Drop confidential feedback or appreciation', link: '#voice' },
     { label: 'University Corner', ariaLabel: 'University guide & senior hub', link: '#university' },
     ...(currentUser?.role === 'admin'
@@ -238,7 +240,12 @@ export default function App() {
           <PetinamSection />
         </ScrollReveal>
 
-        {/* 7. "Your Voice Matters" (Interactive Digital Feedback Form) */}
+        {/* 7. Student Life & Memories Polaroid Gallery */}
+        <ScrollReveal direction="up" delay={0.06}>
+          <GallerySection />
+        </ScrollReveal>
+
+        {/* 8. "Your Voice Matters" (Interactive Digital Feedback Form) */}
         <ScrollReveal direction="up" delay={0.06}>
           <StudentVoice />
         </ScrollReveal>

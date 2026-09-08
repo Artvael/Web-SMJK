@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   BellRing, 
@@ -12,12 +12,27 @@ import {
   Flame,
   Star
 } from 'lucide-react';
-import { announcements } from '../data/initialData';
+import { getAnnouncements } from '../lib/contentStore';
 
 export default function Announcements() {
+  const [announcementsList, setAnnouncementsList] = useState(() => getAnnouncements());
   const [filter, setFilter] = useState('ALL');
   const [searchQuery, setSearchQuery] = useState('');
   const [copiedId, setCopiedId] = useState(null);
+
+  useEffect(() => {
+    const handleSync = () => {
+      setAnnouncementsList(getAnnouncements());
+    };
+    window.addEventListener('content_updated', handleSync);
+    window.addEventListener('storage', handleSync);
+    window.addEventListener('focus', handleSync);
+    return () => {
+      window.removeEventListener('content_updated', handleSync);
+      window.removeEventListener('storage', handleSync);
+      window.removeEventListener('focus', handleSync);
+    };
+  }, []);
 
   const categories = [
     { id: 'ALL', label: 'All Notices', bg: 'bg-white' },
@@ -27,7 +42,7 @@ export default function Announcements() {
     { id: 'PETINAM', label: '👑 Council', bg: 'bg-[#4ade80]' },
   ];
 
-  const filteredAnnouncements = announcements.filter((item) => {
+  const filteredAnnouncements = announcementsList.filter((item) => {
     const matchesFilter = filter === 'ALL' || item.type === filter;
     const matchesSearch = item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                           item.content.toLowerCase().includes(searchQuery.toLowerCase());

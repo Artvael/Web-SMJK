@@ -13,7 +13,11 @@ import {
   Search, 
   Filter, 
   Plus, 
-  Send
+  Send,
+  Camera,
+  Crown,
+  Clock,
+  BellRing
 } from 'lucide-react';
 import { 
   getTrafficStats, 
@@ -23,6 +27,10 @@ import {
 } from '../lib/authStore';
 import { getStudentFeedback } from '../lib/supabase';
 import { calendarEvents as initialEvents } from '../data/initialData';
+import AdminGalleryTab from './admin/AdminGalleryTab';
+import AdminPetinamTab from './admin/AdminPetinamTab';
+import AdminWeeklyTab from './admin/AdminWeeklyTab';
+import AdminAnnouncementsTab from './admin/AdminAnnouncementsTab';
 
 export default function AdminDashboard({ currentUser, onBackToSite, onLogout }) {
   const [activeTab, setActiveTab] = useState('analytics'); // 'analytics' | 'users' | 'feedback' | 'calendar'
@@ -228,9 +236,13 @@ export default function AdminDashboard({ currentUser, onBackToSite, onLogout }) 
         <div className="flex items-center gap-2.5 overflow-x-auto pb-3 mb-8 border-b-2 border-black/20">
           {[
             { id: 'analytics', label: 'Ringkasan & Trafik', icon: Eye, bg: 'bg-[#fde047]' },
-            { id: 'users', label: 'Log Pengguna & Aktiviti', icon: Users, bg: 'bg-[#67e8f9]' },
+            { id: 'gallery', label: '📸 Galeri Foto', icon: Camera, bg: 'bg-[#fef08a]' },
+            { id: 'petinam', label: '👑 Ahli PETINAM', icon: Crown, bg: 'bg-[#c4b5fd]' },
+            { id: 'weekly', label: '⚡ Jadual Mingguan', icon: Clock, bg: 'bg-[#fed7aa]' },
+            { id: 'announcements', label: '📢 Pengumuman', icon: BellRing, bg: 'bg-[#fbcfe8]' },
             { id: 'feedback', label: 'Pengurusan Suara Pelajar', icon: MessageSquare, bg: 'bg-[#f472b6]' },
             { id: 'calendar', label: 'Pengurusan Takwim', icon: Calendar, bg: 'bg-[#4ade80]' },
+            { id: 'users', label: 'Log Pengguna & Aktiviti', icon: Users, bg: 'bg-[#67e8f9]' },
           ].map((tab) => {
             const isSelected = activeTab === tab.id;
             const Icon = tab.icon;
@@ -757,6 +769,50 @@ export default function AdminDashboard({ currentUser, onBackToSite, onLogout }) 
               </div>
             </div>
 
+          </motion.div>
+        )}
+
+        {/* TAB: GALLERY MANAGEMENT */}
+        {activeTab === 'gallery' && (
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.25 }}
+          >
+            <AdminGalleryTab />
+          </motion.div>
+        )}
+
+        {/* TAB: PETINAM COMMITTEE MANAGEMENT */}
+        {activeTab === 'petinam' && (
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.25 }}
+          >
+            <AdminPetinamTab />
+          </motion.div>
+        )}
+
+        {/* TAB: WHAT'S HAPPENING THIS WEEK MANAGEMENT */}
+        {activeTab === 'weekly' && (
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.25 }}
+          >
+            <AdminWeeklyTab />
+          </motion.div>
+        )}
+
+        {/* TAB: ANNOUNCEMENTS MANAGEMENT */}
+        {activeTab === 'announcements' && (
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.25 }}
+          >
+            <AdminAnnouncementsTab />
           </motion.div>
         )}
 

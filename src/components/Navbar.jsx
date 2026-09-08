@@ -12,7 +12,8 @@ import {
   MousePointer2,
   Hand,
   LogIn,
-  LogOut
+  LogOut,
+  Camera
 } from 'lucide-react';
 import { schoolInfo } from '../data/initialData';
 import NotifyModal from './NotifyModal';
@@ -56,6 +57,7 @@ export default function Navbar({
     { label: 'Calendar', href: '#calendar', icon: Calendar },
     { label: 'Notices', href: '#announcements', icon: Bell },
     { label: 'PETINAM', href: '#petinam', icon: Crown },
+    { label: 'Gallery', href: '#gallery', icon: Camera },
     { label: 'Student Voice', href: '#voice', icon: MessageSquare },
     { label: 'Uni Corner', href: '#university', icon: Compass },
   ];

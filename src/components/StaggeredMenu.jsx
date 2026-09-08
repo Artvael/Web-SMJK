@@ -10,6 +10,7 @@ const defaultMenuItems = [
   { label: 'Calendar', ariaLabel: 'View Form 6 Master Calendar', link: '#calendar' },
   { label: 'Announcements', ariaLabel: 'View official bulletin notices', link: '#announcements' },
   { label: 'PETINAM Council', ariaLabel: 'Meet the PETINAM committee & manifesto', link: '#petinam' },
+  { label: 'Memories Gallery', ariaLabel: 'View student life Polaroid gallery', link: '#gallery' },
   { label: 'Student Voice', ariaLabel: 'Drop confidential feedback or appreciation', link: '#voice' },
   { label: 'University Corner', ariaLabel: 'University guide & senior hub', link: '#university' },
   { label: 'Support Contacts', ariaLabel: 'Support directory and hotline', link: '#contacts' }

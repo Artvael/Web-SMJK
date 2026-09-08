@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { 
   Crown, 
@@ -6,15 +6,30 @@ import {
   CheckCircle2, 
   FileText, 
   Mail, 
-  Sparkles,
-  Award,
-  Flame,
-  Star
+  Sparkles, 
+  Award, 
+  Flame, 
+  Star 
 } from 'lucide-react';
-import { petinamTeam } from '../data/initialData';
+import { getPetinamTeam } from '../lib/contentStore';
 
 export default function PetinamSection() {
   const [activeTab, setActiveTab] = useState('manifesto');
+  const [team, setTeam] = useState(() => getPetinamTeam());
+
+  useEffect(() => {
+    const handleSync = () => {
+      setTeam(getPetinamTeam());
+    };
+    window.addEventListener('content_updated', handleSync);
+    window.addEventListener('storage', handleSync);
+    window.addEventListener('focus', handleSync);
+    return () => {
+      window.removeEventListener('content_updated', handleSync);
+      window.removeEventListener('storage', handleSync);
+      window.removeEventListener('focus', handleSync);
+    };
+  }, []);
 
   const cardColors = [
     'bg-[#fef08a]', // President Yellow
@@ -39,11 +54,11 @@ export default function PetinamSection() {
           </h2>
 
           <p className="mt-3 text-lg sm:text-xl font-black text-black">
-            <span className="marker-highlight">“{petinamTeam.mission}”</span>
+            <span className="marker-highlight">“{team.mission || 'Your Voice. Your Future. Our Journey.'}”</span>
           </p>
 
           <p className="mt-3 text-slate-700 font-bold text-xs sm:text-sm leading-relaxed">
-            {petinamTeam.description}
+            {team.description}
           </p>
         </div>
 
@@ -104,7 +119,7 @@ export default function PetinamSection() {
                 </div>
               )}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {(petinamTeam.highCommittee || petinamTeam.committee).map((member, index) => (
+                {(team.highCommittee || []).map((member, index) => (
                   <motion.div
                     key={member.role + index}
                     initial={{ opacity: 0, y: 15 }}
@@ -174,7 +189,7 @@ export default function PetinamSection() {
                 </div>
               )}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                {petinamTeam.excoList.map((exco, idx) => (
+                {(team.excoList || []).map((exco, idx) => (
                   <motion.div
                     key={exco.role + idx}
                     initial={{ opacity: 0, y: 15 }}
