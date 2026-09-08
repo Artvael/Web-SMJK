@@ -210,57 +210,60 @@ export default function Navbar({
               </span>
             </motion.button>
 
-            {/* Auth / Admin Button */}
-            {currentUser ? (
-              <div className="flex items-center gap-1.5">
-                {currentUser.role === 'admin' ? (
+            {/* Auth / Admin Button & Menu Toggle Stacked Column (Directly Underneath) */}
+            <div className="flex flex-col items-stretch gap-1 shrink-0">
+              {/* Top Row: Panel Admin / Log Masuk */}
+              {currentUser ? (
+                <div className="flex items-center gap-1.5 justify-end">
+                  {currentUser.role === 'admin' ? (
+                    <motion.button
+                      type="button"
+                      onClick={onNavigateToAdmin}
+                      whileHover={{ scale: 1.03, y: -1 }}
+                      whileTap={{ scale: 0.97 }}
+                      className="flex items-center justify-center gap-1.5 bg-[#fef08a] hover:bg-[#fde047] border-2 border-black px-2.5 sm:px-3 py-1 rounded-xl text-xs font-mono-clean text-black font-black shadow-[2px_2px_0px_#000000] cursor-pointer whitespace-nowrap flex-1"
+                      title="Buka Panel Pentadbir"
+                    >
+                      <Crown className="w-3.5 h-3.5 text-black animate-bounce shrink-0" />
+                      <span className="hidden sm:inline">Panel Admin</span>
+                      <span className="sm:hidden">Admin</span>
+                    </motion.button>
+                  ) : (
+                    <div className="hidden sm:flex items-center gap-1.5 bg-white border-2 border-black px-2.5 py-1 rounded-xl text-xs font-mono-clean font-bold shadow-[2px_2px_0px_#000]">
+                      <span>{currentUser.avatar || '👨‍🎓'}</span>
+                      <span className="max-w-[70px] truncate">{currentUser.name}</span>
+                    </div>
+                  )}
+
                   <motion.button
                     type="button"
-                    onClick={onNavigateToAdmin}
-                    whileHover={{ scale: 1.05, y: -1 }}
+                    onClick={onLogout}
+                    whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className="flex items-center gap-1.5 bg-[#fef08a] hover:bg-[#fde047] border-2 border-black px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-mono-clean text-black font-black shadow-[2.5px_2.5px_0px_#000000] cursor-pointer whitespace-nowrap"
-                    title="Buka Panel Pentadbir"
+                    className="p-1 bg-white hover:bg-rose-50 border-2 border-black rounded-xl text-xs text-rose-600 shadow-[2px_2px_0px_#000] cursor-pointer shrink-0"
+                    title={`Log keluar (${currentUser.name})`}
                   >
-                    <Crown className="w-3.5 h-3.5 text-black animate-bounce shrink-0" />
-                    <span className="hidden sm:inline">Panel Admin</span>
-                    <span className="sm:hidden">Admin</span>
+                    <LogOut className="w-3.5 h-3.5" />
                   </motion.button>
-                ) : (
-                  <div className="hidden sm:flex items-center gap-1.5 bg-white border-2 border-black px-2.5 py-1.5 rounded-xl text-xs font-mono-clean font-bold shadow-[2px_2px_0px_#000]">
-                    <span>{currentUser.avatar || '👨‍🎓'}</span>
-                    <span className="max-w-[70px] truncate">{currentUser.name}</span>
-                  </div>
-                )}
-
+                </div>
+              ) : (
                 <motion.button
                   type="button"
-                  onClick={onLogout}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="p-1.5 bg-white hover:bg-rose-50 border-2 border-black rounded-xl text-xs text-rose-600 shadow-[2px_2px_0px_#000] cursor-pointer"
-                  title={`Log keluar (${currentUser.name})`}
+                  onClick={onOpenAuthModal}
+                  whileHover={{ scale: 1.03, y: -1 }}
+                  whileTap={{ scale: 0.97 }}
+                  className="flex items-center justify-center gap-1.5 bg-white hover:bg-[#fef08a] border-2 border-black px-2.5 sm:px-3 py-1 rounded-xl text-xs font-mono-clean text-black font-extrabold shadow-[2px_2px_0px_#000000] cursor-pointer transition-colors whitespace-nowrap w-full"
+                  title="Log Masuk Portal (Email / Google)"
                 >
-                  <LogOut className="w-3.5 h-3.5" />
+                  <LogIn className="w-3.5 h-3.5 text-black shrink-0" />
+                  <span className="hidden sm:inline">Log Masuk</span>
+                  <span className="sm:hidden">Login</span>
                 </motion.button>
-              </div>
-            ) : (
-              <motion.button
-                type="button"
-                onClick={onOpenAuthModal}
-                whileHover={{ scale: 1.05, y: -1 }}
-                whileTap={{ scale: 0.95 }}
-                className="flex items-center gap-1.5 bg-white hover:bg-[#fef08a] border-2 border-black px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-mono-clean text-black font-extrabold shadow-[2.5px_2.5px_0px_#000000] cursor-pointer transition-colors whitespace-nowrap"
-                title="Log Masuk Portal (Email / Google)"
-              >
-                <LogIn className="w-3.5 h-3.5 text-black shrink-0" />
-                <span className="hidden sm:inline">Log Masuk</span>
-                <span className="sm:hidden">Login</span>
-              </motion.button>
-            )}
+              )}
 
-            {/* Portal target for StaggeredMenu toggle button */}
-            <div id="staggered-menu-portal" className="flex items-center shrink-0 ml-1" />
+              {/* Bottom Row: Portal target for StaggeredMenu toggle button (Directly under Panel Admin) */}
+              <div id="staggered-menu-portal" className="flex items-center justify-center w-full" />
+            </div>
           </motion.div>
         </div>
       </motion.header>
