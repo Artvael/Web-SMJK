@@ -78,47 +78,145 @@ export default function GallerySection() {
     setTimeout(() => setCopiedId(null), 2000);
   };
 
+  // Ensure enough items to seamlessly span across any ultra-wide screen before repeating
+  const reelItems = photos.length >= 6 
+    ? photos 
+    : [...photos, ...photos, ...photos].slice(0, 8);
+
   return (
     <section id="gallery" className="py-16 px-4 sm:px-6 bg-[#faf8f2] border-b-4 border-black relative overflow-hidden">
       
-      {/* 1. 35mm Analog Film Reel Strip (Top Marquee) */}
-      <div className="mb-10 -mx-4 sm:-mx-6 bg-black py-3 border-y-3 border-black overflow-hidden relative shadow-[0_4px_10px_rgba(0,0,0,0.15)]">
-        {/* Sprocket Holes Top */}
-        <div className="flex justify-between items-center gap-4 px-2 pb-1 opacity-70">
-          {Array.from({ length: 24 }).map((_, i) => (
-            <div key={`sprocket-top-${i}`} className="w-3.5 h-2 bg-white rounded-xs shrink-0" />
-          ))}
-        </div>
+      {/* 1. 35mm Analog Film Reel Strip (Continuous Seamless Loop) */}
+      <div className="mb-10 -mx-4 sm:-mx-6 bg-[#09090b] py-3.5 border-y-3 border-black overflow-hidden relative shadow-[0_4px_12px_rgba(0,0,0,0.25)] select-none">
+        {/* Subtle vintage edge gradient shadows */}
+        <div className="absolute inset-y-0 left-0 w-8 sm:w-16 bg-gradient-to-r from-black/90 to-transparent z-10 pointer-events-none" />
+        <div className="absolute inset-y-0 right-0 w-8 sm:w-16 bg-gradient-to-l from-black/90 to-transparent z-10 pointer-events-none" />
 
-        {/* Film Strip Photos Scrolling Container */}
-        <div className="flex gap-4 overflow-hidden py-1 px-4 items-center">
-          <div className="flex gap-4 animate-marquee shrink-0">
-            {photos.concat(photos).map((p, idx) => (
+        {/* Film Strip Photos Scrolling Container: Track 1 + Track 2 seamlessly looped */}
+        <div className="film-reel-marquee flex overflow-hidden items-center">
+          {/* Track 1 */}
+          <div className="film-track">
+            {reelItems.map((p, idx) => (
               <div 
-                key={`reel-${p.id}-${idx}`}
+                key={`reel-a-${p.id}-${idx}`}
                 onClick={() => setSelectedPhoto(p)}
-                className="w-32 h-20 sm:w-40 sm:h-24 bg-zinc-900 border-2 border-white/80 rounded-md overflow-hidden shrink-0 cursor-pointer group relative shadow-[2px_2px_0px_#fde047]"
+                className="w-40 sm:w-48 bg-[#18181b] border-2 border-zinc-700 hover:border-[#fde047] rounded-xl p-2 shrink-0 cursor-pointer transition-all duration-200 group shadow-[3px_3px_0px_#000000] hover:shadow-[4px_4px_0px_#fde047] hover:-translate-y-1"
               >
-                <img 
-                  src={p.imageUrl} 
-                  alt={p.title} 
-                  className="w-full h-full object-cover grayscale-25 group-hover:grayscale-0 group-hover:scale-110 transition-all duration-300"
-                />
-                <div className="absolute inset-0 bg-black/40 group-hover:bg-transparent transition-colors flex items-end p-1.5">
-                  <span className="text-[9px] font-mono-clean font-black text-white bg-black/80 px-1 rounded truncate max-w-full">
-                    🎞️ {p.category}
+                {/* Top Sprocket Perforations */}
+                <div className="flex items-center justify-between px-1 pb-1.5 opacity-80 border-b border-zinc-800">
+                  <div className="flex gap-1.5">
+                    <div className="w-2.5 h-1.5 bg-zinc-300 rounded-xs" />
+                    <div className="w-2.5 h-1.5 bg-zinc-300 rounded-xs" />
+                    <div className="w-2.5 h-1.5 bg-zinc-300 rounded-xs" />
+                  </div>
+                  <span className="text-[8px] font-mono-clean font-black text-amber-400/90 tracking-widest">
+                    KODAK 35MM
                   </span>
+                  <div className="flex gap-1.5">
+                    <div className="w-2.5 h-1.5 bg-zinc-300 rounded-xs" />
+                    <div className="w-2.5 h-1.5 bg-zinc-300 rounded-xs" />
+                  </div>
+                </div>
+
+                {/* Photo Thumbnail */}
+                <div className="relative aspect-16/10 rounded-lg overflow-hidden my-1 border border-zinc-700 bg-black">
+                  <img 
+                    src={p.imageUrl} 
+                    alt={p.title} 
+                    className="w-full h-full object-cover grayscale-15 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-300"
+                    loading="lazy"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-80 group-hover:opacity-40 transition-opacity" />
+                  <div className="absolute bottom-1.5 left-1.5 right-1.5 flex items-center justify-between">
+                    <span className="text-[9px] font-mono-clean font-black text-white bg-black/80 px-1.5 py-0.5 rounded border border-white/20 truncate max-w-[80%]">
+                      🎞️ {p.category}
+                    </span>
+                    <span className="text-[9px] font-mono-clean font-bold text-yellow-300">
+                      ♥ {p.likes || 0}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Bottom Sprocket Perforations & Frame Mark */}
+                <div className="flex items-center justify-between px-1 pt-1.5 opacity-80 border-t border-zinc-800">
+                  <div className="flex gap-1.5">
+                    <div className="w-2.5 h-1.5 bg-zinc-300 rounded-xs" />
+                    <div className="w-2.5 h-1.5 bg-zinc-300 rounded-xs" />
+                  </div>
+                  <span className="text-[8px] font-mono-clean font-extrabold text-zinc-400">
+                    ▶ {((idx) % reelItems.length) + 1}A • SMCH T6
+                  </span>
+                  <div className="flex gap-1.5">
+                    <div className="w-2.5 h-1.5 bg-zinc-300 rounded-xs" />
+                    <div className="w-2.5 h-1.5 bg-zinc-300 rounded-xs" />
+                    <div className="w-2.5 h-1.5 bg-zinc-300 rounded-xs" />
+                  </div>
                 </div>
               </div>
             ))}
           </div>
-        </div>
 
-        {/* Sprocket Holes Bottom */}
-        <div className="flex justify-between items-center gap-4 px-2 pt-1 opacity-70">
-          {Array.from({ length: 24 }).map((_, i) => (
-            <div key={`sprocket-bot-${i}`} className="w-3.5 h-2 bg-white rounded-xs shrink-0" />
-          ))}
+          {/* Track 2 (Identical Clone for 100% Seamless Infinite Loop) */}
+          <div className="film-track" aria-hidden="true">
+            {reelItems.map((p, idx) => (
+              <div 
+                key={`reel-b-${p.id}-${idx}`}
+                onClick={() => setSelectedPhoto(p)}
+                className="w-40 sm:w-48 bg-[#18181b] border-2 border-zinc-700 hover:border-[#fde047] rounded-xl p-2 shrink-0 cursor-pointer transition-all duration-200 group shadow-[3px_3px_0px_#000000] hover:shadow-[4px_4px_0px_#fde047] hover:-translate-y-1"
+              >
+                {/* Top Sprocket Perforations */}
+                <div className="flex items-center justify-between px-1 pb-1.5 opacity-80 border-b border-zinc-800">
+                  <div className="flex gap-1.5">
+                    <div className="w-2.5 h-1.5 bg-zinc-300 rounded-xs" />
+                    <div className="w-2.5 h-1.5 bg-zinc-300 rounded-xs" />
+                    <div className="w-2.5 h-1.5 bg-zinc-300 rounded-xs" />
+                  </div>
+                  <span className="text-[8px] font-mono-clean font-black text-amber-400/90 tracking-widest">
+                    KODAK 35MM
+                  </span>
+                  <div className="flex gap-1.5">
+                    <div className="w-2.5 h-1.5 bg-zinc-300 rounded-xs" />
+                    <div className="w-2.5 h-1.5 bg-zinc-300 rounded-xs" />
+                  </div>
+                </div>
+
+                {/* Photo Thumbnail */}
+                <div className="relative aspect-16/10 rounded-lg overflow-hidden my-1 border border-zinc-700 bg-black">
+                  <img 
+                    src={p.imageUrl} 
+                    alt={p.title} 
+                    className="w-full h-full object-cover grayscale-15 group-hover:grayscale-0 group-hover:scale-105 transition-all duration-300"
+                    loading="lazy"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-80 group-hover:opacity-40 transition-opacity" />
+                  <div className="absolute bottom-1.5 left-1.5 right-1.5 flex items-center justify-between">
+                    <span className="text-[9px] font-mono-clean font-black text-white bg-black/80 px-1.5 py-0.5 rounded border border-white/20 truncate max-w-[80%]">
+                      🎞️ {p.category}
+                    </span>
+                    <span className="text-[9px] font-mono-clean font-bold text-yellow-300">
+                      ♥ {p.likes || 0}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Bottom Sprocket Perforations & Frame Mark */}
+                <div className="flex items-center justify-between px-1 pt-1.5 opacity-80 border-t border-zinc-800">
+                  <div className="flex gap-1.5">
+                    <div className="w-2.5 h-1.5 bg-zinc-300 rounded-xs" />
+                    <div className="w-2.5 h-1.5 bg-zinc-300 rounded-xs" />
+                  </div>
+                  <span className="text-[8px] font-mono-clean font-extrabold text-zinc-400">
+                    ▶ {((idx) % reelItems.length) + 1}A • SMCH T6
+                  </span>
+                  <div className="flex gap-1.5">
+                    <div className="w-2.5 h-1.5 bg-zinc-300 rounded-xs" />
+                    <div className="w-2.5 h-1.5 bg-zinc-300 rounded-xs" />
+                    <div className="w-2.5 h-1.5 bg-zinc-300 rounded-xs" />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 

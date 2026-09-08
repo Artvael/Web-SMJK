@@ -163,6 +163,29 @@
   animation-play-state: paused;
 }
 
+/* Seamless 35mm Filmstrip Infinite Conveyor Loop */
+@keyframes filmContinuousLoop {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.film-track {
+  display: flex;
+  flex-shrink: 0;
+  gap: 1rem;
+  padding-right: 1rem;
+  will-change: transform;
+  animation: filmContinuousLoop 35s linear infinite;
+}
+
+.film-reel-marquee:hover .film-track {
+  animation-play-state: paused;
+}
+
 /* Handwritten font utility */
 .font-handwriting {
   font-family: var(--font-hand);
