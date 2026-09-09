@@ -227,7 +227,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
                   <input
                     type="text"
                     required
-                    placeholder="Contoh: Artvael Victor / Siti Aminah"
+                    placeholder="Contoh: Lim Wei Kang / Siti Aminah"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     className="w-full bg-slate-50 pl-9 pr-3 py-2.5 rounded-xl border-2 border-black text-xs font-bold text-black focus:outline-none shadow-[2px_2px_0px_#000]"

@@ -93,7 +93,7 @@ export function getRegisteredUsers() {
       return DEFAULT_USERS;
     }
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) && parsed.length > 0 ? parsed : DEFAULT_USERS;
+    return Array.isArray(parsed) ? parsed : DEFAULT_USERS;
   } catch {
     return DEFAULT_USERS;
   }
@@ -138,6 +138,53 @@ export function recordActivityLog({ userName, userEmail, role = 'student', actio
     localStorage.setItem(ACTIVITY_LOGS_KEY, JSON.stringify(logs.slice(0, 100))); // Keep latest 100
   } catch (err) {
     console.warn('Failed to record activity log:', err);
+  }
+}
+
+/**
+ * Delete a single activity log by ID
+ */
+export function deleteActivityLog(logId) {
+  if (typeof window === 'undefined') return [];
+  try {
+    const logs = getUserActivityLogs().filter((l) => l.id !== logId);
+    localStorage.setItem(ACTIVITY_LOGS_KEY, JSON.stringify(logs));
+    return logs;
+  } catch (err) {
+    console.warn('Failed to delete activity log:', err);
+    return [];
+  }
+}
+
+/**
+ * Clear all activity logs completely
+ */
+export function clearAllActivityLogs() {
+  if (typeof window === 'undefined') return [];
+  try {
+    localStorage.setItem(ACTIVITY_LOGS_KEY, JSON.stringify([]));
+    return [];
+  } catch (err) {
+    console.warn('Failed to clear activity logs:', err);
+    return [];
+  }
+}
+
+/**
+ * Delete a registered user account by ID or email
+ */
+export function deleteRegisteredUser(userIdOrEmail) {
+  if (typeof window === 'undefined') return [];
+  try {
+    const target = String(userIdOrEmail).trim().toLowerCase();
+    const users = getRegisteredUsers().filter(
+      (u) => u.id !== userIdOrEmail && u.email?.toLowerCase() !== target
+    );
+    localStorage.setItem(REGISTERED_USERS_KEY, JSON.stringify(users));
+    return users;
+  } catch (err) {
+    console.warn('Failed to delete user:', err);
+    return [];
   }
 }
 
@@ -312,7 +359,7 @@ export async function signInWithGoogle(promptEmail = null) {
   }
 
   // Realistic Google Sign-In handling
-  const googleEmail = promptEmail || (window.prompt ? window.prompt('Masukkan akaun Google anda (contoh: artvaelvictor@gmail.com / admin@smjkchunghwa.edu.my):', 'artvaelvictor@gmail.com') : null);
+  const googleEmail = promptEmail || (window.prompt ? window.prompt('Masukkan akaun Google anda (contoh: user@gmail.com / admin@smjkchunghwa.edu.my):', 'admin@smjkchunghwa.edu.my') : null);
   
   if (!googleEmail) {
     return { success: false, message: 'Log masuk Google dibatalkan.' };
@@ -320,7 +367,7 @@ export async function signInWithGoogle(promptEmail = null) {
 
   const cleanEmail = googleEmail.trim().toLowerCase();
   const userName = cleanEmail.split('@')[0].replace(/[._-]/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-  const isAdmin = cleanEmail.includes('admin') || cleanEmail.includes('artvael') || cleanEmail.includes('vannie');
+  const isAdmin = cleanEmail.includes('admin') || cleanEmail.includes('vannie');
 
   const googleUser = {
     id: 'goog_' + Date.now(),

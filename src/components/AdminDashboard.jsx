@@ -24,6 +24,9 @@ import {
   getTrafficStats, 
   getUserActivityLogs, 
   getRegisteredUsers, 
+  deleteActivityLog,
+  clearAllActivityLogs,
+  deleteRegisteredUser,
   logoutUser 
 } from '../lib/authStore';
 import { getStudentFeedback } from '../lib/supabase';
@@ -91,6 +94,27 @@ export default function AdminDashboard({ currentUser, onBackToSite, onLogout }) 
     setRegisteredUsers(getRegisteredUsers());
     setNotes(getStudentFeedback());
   }, []);
+
+  // Delete individual activity log
+  const handleDeleteLog = (logId) => {
+    if (!window.confirm('Padam rekod log aktiviti ini?')) return;
+    const updated = deleteActivityLog(logId);
+    setUserLogs([...updated]);
+  };
+
+  // Clear all activity logs
+  const handleClearAllLogs = () => {
+    if (!window.confirm('Adakah anda pasti ingin mengosongkan SEMUA rekod log aktiviti? Tindakan ini tidak boleh diundur.')) return;
+    const updated = clearAllActivityLogs();
+    setUserLogs([...updated]);
+  };
+
+  // Delete registered user
+  const handleDeleteUser = (userId, email) => {
+    if (!window.confirm(`Padamkan pengguna "${email || 'ini'}" daripada senarai akaun berdaftar?`)) return;
+    const updated = deleteRegisteredUser(userId);
+    setRegisteredUsers([...updated]);
+  };
 
   // Update Feedback Status
   const handleUpdateStatus = (noteId, newStatus) => {
@@ -441,9 +465,22 @@ export default function AdminDashboard({ currentUser, onBackToSite, onLogout }) 
                   Memaparkan rekod sesiapa sahaja yang mendaftar dan log masuk ke portal (Google OAuth vs Emel).
                 </p>
               </div>
-              <span className="text-xs font-mono-clean font-black bg-white px-3 py-1.5 rounded-xl border-2 border-black self-start sm:self-auto shadow-[2px_2px_0px_#000]">
-                {userLogs.length} Rekod Tercatat
-              </span>
+              <div className="flex items-center gap-2">
+                {userLogs.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={handleClearAllLogs}
+                    className="neo-btn bg-rose-500 hover:bg-rose-600 text-white text-xs font-mono-clean font-black px-3 py-1.5 gap-1.5 shadow-[2px_2px_0px_#000]"
+                    title="Padam semua log aktiviti"
+                  >
+                    <Trash2 className="w-3.5 h-3.5 stroke-[2.5]" />
+                    <span>Kosongkan Semua Log</span>
+                  </button>
+                )}
+                <span className="text-xs font-mono-clean font-black bg-white px-3 py-1.5 rounded-xl border-2 border-black self-start sm:self-auto shadow-[2px_2px_0px_#000]">
+                  {userLogs.length} Rekod Tercatat
+                </span>
+              </div>
             </div>
 
             {/* Table of Activity Logs */}
@@ -457,69 +494,109 @@ export default function AdminDashboard({ currentUser, onBackToSite, onLogout }) 
                     <th className="p-3.5">Tindakan</th>
                     <th className="p-3.5">Peranti</th>
                     <th className="p-3.5">Waktu Akses</th>
+                    <th className="p-3.5 text-center">Padam</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y-2 divide-slate-200">
-                  {userLogs.map((log) => {
-                    const isGoogle = log.method?.toLowerCase().includes('google');
-                    return (
-                      <tr key={log.id} className="hover:bg-amber-50/60 transition-colors">
-                        <td className="p-3.5 font-black text-black flex items-center gap-2">
-                          <span className="w-7 h-7 rounded-full bg-slate-100 border border-black flex items-center justify-center font-extrabold text-xs shadow-[1px_1px_0px_#000]">
-                            {log.role === 'admin' ? '👑' : '👨‍🎓'}
-                          </span>
-                          <span>{log.userName}</span>
-                        </td>
-                        <td className="p-3.5 font-bold text-slate-700">{log.userEmail}</td>
-                        <td className="p-3.5">
-                          <span className={`inline-flex items-center gap-1 text-[10px] font-black px-2 py-0.5 rounded border border-black shadow-[1px_1px_0px_#000] ${
-                            isGoogle ? 'bg-white text-blue-700' : 'bg-[#fef08a] text-black'
-                          }`}>
-                            {isGoogle ? '🌐 Google OAuth' : '🔑 Email & Password'}
-                          </span>
-                        </td>
-                        <td className="p-3.5 font-black">
-                          <span className="px-2 py-0.5 bg-slate-100 border border-black rounded text-[10px]">
-                            {log.action}
-                          </span>
-                        </td>
-                        <td className="p-3.5 font-bold text-slate-600">{log.device || 'Web Browser'}</td>
-                        <td className="p-3.5 font-bold text-slate-500">
-                          {new Date(log.timestamp).toLocaleString('ms-MY', {
-                            dateStyle: 'short',
-                            timeStyle: 'short',
-                          })}
-                        </td>
-                      </tr>
-                    );
-                  })}
+                  {userLogs.length === 0 ? (
+                    <tr>
+                      <td colSpan={7} className="p-8 text-center text-slate-500 font-bold font-mono-clean">
+                        Tiada rekod log aktiviti. Semua log telah dipadam atau dikosongkan.
+                      </td>
+                    </tr>
+                  ) : (
+                    userLogs.map((log) => {
+                      const isGoogle = log.method?.toLowerCase().includes('google');
+                      return (
+                        <tr key={log.id} className="hover:bg-amber-50/60 transition-colors">
+                          <td className="p-3.5 font-black text-black flex items-center gap-2">
+                            <span className="w-7 h-7 rounded-full bg-slate-100 border border-black flex items-center justify-center font-extrabold text-xs shadow-[1px_1px_0px_#000]">
+                              {log.role === 'admin' ? '👑' : '👨‍🎓'}
+                            </span>
+                            <span>{log.userName}</span>
+                          </td>
+                          <td className="p-3.5 font-bold text-slate-700">{log.userEmail}</td>
+                          <td className="p-3.5">
+                            <span className={`inline-flex items-center gap-1 text-[10px] font-black px-2 py-0.5 rounded border border-black shadow-[1px_1px_0px_#000] ${
+                              isGoogle ? 'bg-white text-blue-700' : 'bg-[#fef08a] text-black'
+                            }`}>
+                              {isGoogle ? '🌐 Google OAuth' : '🔑 Email & Password'}
+                            </span>
+                          </td>
+                          <td className="p-3.5 font-black">
+                            <span className="px-2 py-0.5 bg-slate-100 border border-black rounded text-[10px]">
+                              {log.action}
+                            </span>
+                          </td>
+                          <td className="p-3.5 font-bold text-slate-600">{log.device || 'Web Browser'}</td>
+                          <td className="p-3.5 font-bold text-slate-500">
+                            {new Date(log.timestamp).toLocaleString('ms-MY', {
+                              dateStyle: 'short',
+                              timeStyle: 'short',
+                            })}
+                          </td>
+                          <td className="p-3.5 text-center">
+                            <button
+                              type="button"
+                              onClick={() => handleDeleteLog(log.id)}
+                              title="Padam rekod log ini"
+                              className="p-1.5 bg-rose-100 hover:bg-rose-200 text-rose-700 border-2 border-black rounded-lg shadow-[1.5px_1.5px_0px_#000] cursor-pointer inline-flex items-center justify-center transition-transform active:scale-95"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )}
                 </tbody>
               </table>
             </div>
 
             {/* Registered Users Summary List */}
             <div className="neo-card p-6 bg-white border-3 border-black rounded-2xl shadow-[6px_6px_0px_#000]">
-              <h4 className="font-mono-clean font-black text-base uppercase text-black mb-4">
-                Senarai Akaun Pengguna Berdaftar ({registeredUsers.length})
-              </h4>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {registeredUsers.map((u) => (
-                  <div key={u.id} className="p-4 rounded-xl border-2 border-black bg-[#fefce8] shadow-[2.5px_2.5px_0px_#000] flex items-center justify-between">
-                    <div>
-                      <span className="font-black text-xs text-black block truncate">{u.name}</span>
-                      <span className="text-[11px] text-slate-600 font-bold block truncate">{u.email}</span>
-                      <span className="text-[10px] text-slate-500 font-mono-clean block mt-1">
-                        {u.studentClass || 'Tingkatan 6'}
-                      </span>
-                    </div>
-                    <span className={`text-[10px] font-black px-2 py-0.8 rounded border border-black shadow-[1px_1px_0px_#000] ${
-                      u.role === 'admin' ? 'bg-[#f472b6] text-black' : 'bg-[#67e8f9] text-black'
-                    }`}>
-                      {u.role === 'admin' ? 'ADMIN' : 'STUDENT'}
-                    </span>
-                  </div>
-                ))}
+              <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+                <h4 className="font-mono-clean font-black text-base uppercase text-black">
+                  Senarai Akaun Pengguna Berdaftar ({registeredUsers.length})
+                </h4>
+                <span className="text-[11px] font-bold text-slate-600 bg-slate-100 px-2.5 py-1 rounded-lg border border-black">
+                  Data disimpan selamat secara lokal dalam pelayar (browser)
+                </span>
               </div>
+              {registeredUsers.length === 0 ? (
+                <p className="text-xs text-slate-500 font-bold p-4 text-center bg-slate-50 border-2 border-dashed border-slate-300 rounded-xl">
+                  Tiada akaun tersimpan.
+                </p>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {registeredUsers.map((u) => (
+                    <div key={u.id} className="p-4 rounded-xl border-2 border-black bg-[#fefce8] shadow-[2.5px_2.5px_0px_#000] flex items-center justify-between gap-2">
+                      <div className="min-w-0 flex-1">
+                        <span className="font-black text-xs text-black block truncate">{u.name}</span>
+                        <span className="text-[11px] text-slate-600 font-bold block truncate">{u.email}</span>
+                        <span className="text-[10px] text-slate-500 font-mono-clean block mt-1">
+                          {u.studentClass || 'Tingkatan 6'}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        <span className={`text-[10px] font-black px-2 py-0.8 rounded border border-black shadow-[1px_1px_0px_#000] ${
+                          u.role === 'admin' ? 'bg-[#f472b6] text-black' : 'bg-[#67e8f9] text-black'
+                        }`}>
+                          {u.role === 'admin' ? 'ADMIN' : 'STUDENT'}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteUser(u.id, u.email)}
+                          title={`Padam akaun ${u.email}`}
+                          className="p-1.5 bg-rose-100 hover:bg-rose-200 text-rose-700 border-2 border-black rounded-lg shadow-[1.5px_1.5px_0px_#000] cursor-pointer inline-flex items-center justify-center transition-transform active:scale-95"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
           </motion.div>
