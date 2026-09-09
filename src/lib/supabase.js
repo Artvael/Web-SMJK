@@ -150,6 +150,67 @@ export function getStudentFeedback() {
 }
 
 /**
+ * Fetch remote feedback from Supabase cloud database
+ */
+export async function fetchRemoteStudentFeedback() {
+  if (!isSupabaseConfigured || !supabase) return null;
+  try {
+    const { data, error } = await supabase
+      .from('student_feedback')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (!error && Array.isArray(data)) {
+      if (data.length > 0) {
+        const mapped = data.map((item) => ({
+          id: item.id,
+          category: item.category || 'Suggestion',
+          name: item.name || 'Anonymous Student',
+          isAnonymous: item.isAnonymous !== undefined ? item.isAnonymous : item.is_anonymous,
+          studentClass: item.studentClass || item.student_class || 'Tingkatan 6',
+          title: item.title || 'Suara Pelajar',
+          message: item.message || '',
+          status: item.status || '📌 Diterima oleh PETINAM',
+          adminReply: item.adminReply || item.admin_reply || null,
+          adminRepliedAt: item.adminRepliedAt || item.admin_replied_at || null,
+          likes: item.likes || 1,
+          created_at: item.created_at,
+        }));
+        try {
+          localStorage.setItem('chung_hwa_feedback', JSON.stringify(mapped));
+          window.dispatchEvent(new Event('feedback_updated'));
+        } catch {}
+        return mapped;
+      } else {
+        // If remote table exists but has 0 rows, seed with initial notes
+        for (const note of INITIAL_STUDENT_NOTES) {
+          try {
+            await supabase.from('student_feedback').insert([{
+              id: note.id,
+              name: note.name,
+              student_class: note.studentClass,
+              category: note.category,
+              title: note.title,
+              message: note.message,
+              is_anonymous: note.isAnonymous,
+              status: note.status,
+              admin_reply: note.adminReply || null,
+              admin_replied_at: note.adminRepliedAt || null,
+              likes: note.likes,
+              created_at: note.created_at,
+            }]);
+          } catch {}
+        }
+        return INITIAL_STUDENT_NOTES;
+      }
+    }
+  } catch (err) {
+    console.warn('Supabase fetch notes error:', err);
+  }
+  return null;
+}
+
+/**
  * Submit feedback to Supabase or fallback to LocalStorage
  */
 export async function submitStudentFeedback(feedbackData) {
@@ -164,11 +225,19 @@ export async function submitStudentFeedback(feedbackData) {
 
   if (isSupabaseConfigured && supabase) {
     try {
-      const { data, error } = await supabase
-        .from('student_feedback')
-        .insert([payload]);
-      if (error) throw error;
-      return { success: true, source: 'supabase', data: payload };
+      const dbRow = {
+        id: payload.id,
+        name: payload.name,
+        category: payload.category,
+        title: payload.title,
+        message: payload.message,
+        status: payload.status,
+        likes: payload.likes,
+        created_at: payload.created_at,
+        is_anonymous: Boolean(payload.isAnonymous),
+        student_class: payload.studentClass || 'Tingkatan 6',
+      };
+      await supabase.from('student_feedback').insert([dbRow]);
     } catch (err) {
       console.warn('Supabase submission failed, falling back to localStorage:', err);
     }
@@ -177,21 +246,55 @@ export async function submitStudentFeedback(feedbackData) {
   // Persist to LocalStorage
   try {
     const existing = getStudentFeedback();
-    const updated = [payload, ...existing.filter(item => item.id !== payload.id)];
+    const updated = [payload, ...existing.filter((item) => item.id !== payload.id)];
     localStorage.setItem('chung_hwa_feedback', JSON.stringify(updated));
-    return { success: true, source: 'local', data: payload };
+    window.dispatchEvent(new Event('feedback_updated'));
+    return { success: true, source: isSupabaseConfigured ? 'supabase' : 'local', data: payload };
   } catch (e) {
     return { success: true, source: 'memory', data: payload };
   }
 }
 
 /**
- * Toggle like reaction on a note and persist to localStorage
+ * Update feedback note in Supabase (admin reply or status update)
+ */
+export async function updateFeedbackNote(noteId, updates) {
+  if (isSupabaseConfigured && supabase) {
+    try {
+      const dbUpdates = {};
+      if (updates.status !== undefined) dbUpdates.status = updates.status;
+      if (updates.adminReply !== undefined) {
+        dbUpdates.admin_reply = updates.adminReply;
+        dbUpdates.admin_replied_at = updates.adminRepliedAt || new Date().toISOString();
+      }
+      if (updates.likes !== undefined) dbUpdates.likes = updates.likes;
+      await supabase.from('student_feedback').update(dbUpdates).eq('id', noteId);
+    } catch (err) {
+      console.warn('Supabase update note error:', err);
+    }
+  }
+}
+
+/**
+ * Delete feedback note from Supabase
+ */
+export async function deleteFeedbackNoteRemote(noteId) {
+  if (isSupabaseConfigured && supabase) {
+    try {
+      await supabase.from('student_feedback').delete().eq('id', noteId);
+    } catch (err) {
+      console.warn('Supabase delete note error:', err);
+    }
+  }
+}
+
+/**
+ * Toggle like reaction on a note and persist to localStorage + Supabase
  */
 export function toggleLikeFeedback(noteId) {
   try {
     const notes = getStudentFeedback();
-    const target = notes.find(n => n.id === noteId);
+    const target = notes.find((n) => n.id === noteId);
     if (target) {
       const likedKey = `liked_${noteId}`;
       const isAlreadyLiked = localStorage.getItem(likedKey) === 'true';
@@ -203,6 +306,11 @@ export function toggleLikeFeedback(noteId) {
         localStorage.setItem(likedKey, 'true');
       }
       localStorage.setItem('chung_hwa_feedback', JSON.stringify(notes));
+
+      // Sync likes to Supabase
+      if (isSupabaseConfigured && supabase) {
+        supabase.from('student_feedback').update({ likes: target.likes }).eq('id', noteId).then();
+      }
       return { success: true, likes: target.likes, isLiked: !isAlreadyLiked };
     }
   } catch (e) {

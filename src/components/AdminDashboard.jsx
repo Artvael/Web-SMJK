@@ -29,8 +29,12 @@ import {
   deleteRegisteredUser,
   logoutUser 
 } from '../lib/authStore';
-import { getStudentFeedback } from '../lib/supabase';
-import { calendarEvents as initialEvents } from '../data/initialData';
+import { 
+  getStudentFeedback, 
+  fetchRemoteStudentFeedback, 
+  updateFeedbackNote, 
+  deleteFeedbackNoteRemote 
+} from '../lib/supabase';
 import AdminGalleryTab from './admin/AdminGalleryTab';
 import AdminPetinamTab from './admin/AdminPetinamTab';
 import AdminWeeklyTab from './admin/AdminWeeklyTab';
@@ -93,6 +97,11 @@ export default function AdminDashboard({ currentUser, onBackToSite, onLogout }) 
     setUserLogs(getUserActivityLogs());
     setRegisteredUsers(getRegisteredUsers());
     setNotes(getStudentFeedback());
+
+    // Sync latest notes from Supabase cloud
+    fetchRemoteStudentFeedback().then((remote) => {
+      if (remote) setNotes(remote);
+    });
   }, []);
 
   // Delete individual activity log
@@ -123,6 +132,7 @@ export default function AdminDashboard({ currentUser, onBackToSite, onLogout }) 
       setNotes(updated);
       localStorage.setItem('chung_hwa_feedback', JSON.stringify(updated));
       window.dispatchEvent(new Event('feedback_updated'));
+      updateFeedbackNote(noteId, { status: newStatus });
     } catch (e) {
       console.warn('Failed to update status:', e);
     }
@@ -133,13 +143,14 @@ export default function AdminDashboard({ currentUser, onBackToSite, onLogout }) 
     const text = (replyTextMap[noteId] || '').trim();
     if (!text) return;
 
+    const replyTime = new Date().toISOString();
     try {
       const updated = notes.map((n) => {
         if (n.id === noteId) {
           return {
             ...n,
             adminReply: text,
-            adminRepliedAt: new Date().toISOString(),
+            adminRepliedAt: replyTime,
             status: '✅ Selesai & Dibalas',
           };
         }
@@ -149,6 +160,7 @@ export default function AdminDashboard({ currentUser, onBackToSite, onLogout }) 
       localStorage.setItem('chung_hwa_feedback', JSON.stringify(updated));
       window.dispatchEvent(new Event('feedback_updated'));
       setReplyTextMap((prev) => ({ ...prev, [noteId]: '' }));
+      updateFeedbackNote(noteId, { adminReply: text, adminRepliedAt: replyTime, status: '✅ Selesai & Dibalas' });
     } catch (e) {
       console.warn('Failed to save reply:', e);
     }
@@ -162,6 +174,7 @@ export default function AdminDashboard({ currentUser, onBackToSite, onLogout }) 
       setNotes(updated);
       localStorage.setItem('chung_hwa_feedback', JSON.stringify(updated));
       window.dispatchEvent(new Event('feedback_updated'));
+      deleteFeedbackNoteRemote(noteId);
     } catch (e) {
       console.warn('Failed to delete note:', e);
     }

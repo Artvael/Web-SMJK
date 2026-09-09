@@ -8,7 +8,7 @@ import {
   Lock,
   ArrowDown
 } from 'lucide-react';
-import { submitStudentFeedback, getStudentFeedback } from '../lib/supabase';
+import { submitStudentFeedback, getStudentFeedback, fetchRemoteStudentFeedback } from '../lib/supabase';
 import { recordActivityLog } from '../lib/authStore';
 import VoiceBoard from './VoiceBoard';
 
@@ -32,6 +32,11 @@ export default function StudentVoice() {
 
   // Automatically re-sync notes if admin replies or changes status in Admin Dashboard
   useEffect(() => {
+    // Initial sync with remote Supabase database
+    fetchRemoteStudentFeedback().then((remoteNotes) => {
+      if (remoteNotes) setNotes(remoteNotes);
+    });
+
     const handleSync = () => {
       setNotes(getStudentFeedback());
     };
