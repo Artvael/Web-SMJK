@@ -302,6 +302,26 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
               <span>{loading ? 'Memproses...' : mode === 'login' ? 'Log Masuk ➔' : 'Daftar Akaun ➔'}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
+
+            {mode === 'login' && (
+              <div className="mt-3 p-2.5 bg-[#fefce8] border-2 border-black rounded-xl flex items-center justify-between text-[11px] font-mono-clean shadow-[2px_2px_0px_#000]">
+                <div className="text-slate-700 min-w-0 pr-2 truncate">
+                  <span className="font-black text-black">Akaun Admin:</span>{' '}
+                  <span className="font-bold text-black">admin@smjkchunghwa.edu.my</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setEmail('admin@smjkchunghwa.edu.my');
+                    setPassword('admin123');
+                  }}
+                  title="Klik untuk mengisi emel dan kata laluan admin secara automatik"
+                  className="px-2.5 py-1 bg-[#67e8f9] hover:bg-[#38bdf8] border border-black rounded-lg font-black text-[10px] shrink-0 cursor-pointer shadow-[1px_1px_0px_#000] active:translate-y-0.5"
+                >
+                  Isi Auto ⚡
+                </button>
+              </div>
+            )}
           </form>
 
           {/* Footer Note */}
