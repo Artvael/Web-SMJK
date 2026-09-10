@@ -95,6 +95,14 @@
   outline-offset: 4px;
 }
 
+#staggered-menu-portal .sm-toggle {
+  width: 100%;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.72rem;
+  justify-content: center;
+  box-shadow: 2px 2px 0px #000000;
+}
+
 #staggered-menu-portal {
   width: 100%;
 }

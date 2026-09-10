@@ -60,10 +60,18 @@ export const StaggeredMenu = ({
   });
 
   useEffect(() => {
-    if (!portalTarget && typeof document !== 'undefined') {
-      const el = document.getElementById('staggered-menu-portal');
-      if (el) setPortalTarget(el);
-    }
+    const attachPortal = () => {
+      if (typeof document !== 'undefined') {
+        const el = document.getElementById('staggered-menu-portal');
+        if (el && el !== portalTarget) {
+          setPortalTarget(el);
+        }
+      }
+    };
+
+    attachPortal();
+    const interval = setInterval(attachPortal, 250);
+    return () => clearInterval(interval);
   }, [portalTarget]);
 
   useLayoutEffect(() => {

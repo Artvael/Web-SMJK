@@ -91,7 +91,7 @@ export default function Navbar({
           isScrolled && !isMenuOpen ? 'backdrop-blur-[6px] bg-white/50 py-1.5' : 'bg-transparent py-0.5'
         }`}
       >
-        <div className="max-w-7xl mx-auto flex items-center justify-between gap-3 sm:gap-4 pointer-events-auto">
+        <div className="w-full max-w-[1600px] mx-auto flex items-center justify-between gap-3 sm:gap-4 pointer-events-auto">
           
           {/* Left: School Crest + Brand in Neobrutalist Pill */}
           <motion.a 
@@ -101,7 +101,7 @@ export default function Navbar({
             transition={{ type: 'spring', stiffness: 220, damping: 18, delay: 0.05 }}
             whileHover={{ y: -2, x: -1, scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className={`flex items-center gap-2.5 bg-white border-2 border-black px-3 py-1.5 rounded-xl shadow-[3px_3px_0px_#000000] hover:shadow-[5px_5px_0px_#000000] transition-shadow group ${
+            className={`flex items-center gap-2.5 bg-white border-2 border-black px-3 py-1.5 rounded-xl shadow-[3px_3px_0px_#000000] hover:shadow-[5px_5px_0px_#000000] transition-shadow group shrink-0 ${
               isMenuOpen ? 'max-sm:opacity-0 max-sm:pointer-events-none' : 'opacity-100'
             }`}
           >
@@ -125,12 +125,12 @@ export default function Navbar({
             </div>
           </motion.a>
 
-          {/* Center: Figma-style Navigation Dock */}
+          {/* Center: Figma-style Navigation Dock (Shown on ultra-wide 2xl screens to avoid crowding) */}
           <motion.nav 
             initial={{ y: -30, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ type: 'spring', stiffness: 220, damping: 18, delay: 0.1 }}
-            className={`hidden xl:flex items-center gap-1 bg-white border-2 border-black px-2 py-1.5 rounded-2xl transition-shadow ${
+            className={`hidden 2xl:flex items-center gap-1 bg-white border-2 border-black px-2 py-1.5 rounded-2xl transition-shadow shrink-0 ${
               isScrolled ? 'shadow-[5px_5px_0px_#000000]' : 'shadow-[4px_4px_0px_#000000]'
             }`}
           >
@@ -184,21 +184,21 @@ export default function Navbar({
             })}
           </motion.nav>
 
-          {/* Right Action Widgets */}
+          {/* Right Action Widgets: STPM countdown, Login/Admin, and Menu Toggle */}
           <motion.div 
             initial={{ x: 25, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             transition={{ type: 'spring', stiffness: 220, damping: 18, delay: 0.12 }}
-            className="flex items-center gap-2 sm:gap-3 shrink-0"
+            className="flex items-center gap-2 sm:gap-3 shrink-0 ml-auto"
           >
             {/* STPM Countdown Pill with Notify Me trigger */}
             <motion.button 
               type="button"
               onClick={() => setIsNotifyModalOpen(true)}
               title={`Tetapkan peringatan peperiksaan ${countdownConfig.examName || 'STPM'}`}
-              whileHover={{ scale: 1.05, y: -1, rotate: [-1, 1, 0] }}
+              whileHover={{ scale: 1.05, y: -1 }}
               whileTap={{ scale: 0.95 }}
-              className="hidden xl:flex items-center gap-2 bg-[#fef08a] hover:bg-[#fde047] border-2 border-black px-3 py-1.5 rounded-xl text-xs font-mono-clean text-black font-extrabold shadow-[2.5px_2.5px_0px_#000000] cursor-pointer transition-colors whitespace-nowrap shrink-0"
+              className="hidden lg:flex items-center gap-2 bg-[#fef08a] hover:bg-[#fde047] border-2 border-black px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-mono-clean text-black font-extrabold shadow-[2.5px_2.5px_0px_#000000] cursor-pointer transition-colors whitespace-nowrap shrink-0"
             >
               <Clock className="w-3.5 h-3.5 animate-pulse text-red-600 shrink-0" />
               <span className="whitespace-nowrap shrink-0">
@@ -211,27 +211,26 @@ export default function Navbar({
             </motion.button>
 
             {/* Auth / Admin Button & Menu Toggle Stacked Column (Directly Underneath) */}
-            <div className="flex flex-col items-stretch gap-1 shrink-0">
+            <div className="flex flex-col items-stretch gap-1 shrink-0 w-[96px] sm:w-[110px]">
               {/* Top Row: Panel Admin / Log Masuk */}
               {currentUser ? (
-                <div className="flex items-center gap-1.5 justify-end">
+                <div className="flex items-center gap-1 justify-end w-full">
                   {currentUser.role === 'admin' ? (
                     <motion.button
                       type="button"
                       onClick={onNavigateToAdmin}
                       whileHover={{ scale: 1.03, y: -1 }}
                       whileTap={{ scale: 0.97 }}
-                      className="flex items-center justify-center gap-1.5 bg-[#fef08a] hover:bg-[#fde047] border-2 border-black px-2.5 sm:px-3 py-1 rounded-xl text-xs font-mono-clean text-black font-black shadow-[2px_2px_0px_#000000] cursor-pointer whitespace-nowrap flex-1"
+                      className="flex items-center justify-center gap-1 bg-[#fef08a] hover:bg-[#fde047] border-2 border-black px-2 py-1 rounded-xl text-[11px] sm:text-xs font-mono-clean text-black font-black shadow-[2px_2px_0px_#000000] cursor-pointer whitespace-nowrap flex-1"
                       title="Buka Panel Pentadbir"
                     >
                       <Crown className="w-3.5 h-3.5 text-black animate-bounce shrink-0" />
-                      <span className="hidden sm:inline">Panel Admin</span>
-                      <span className="sm:hidden">Admin</span>
+                      <span>Admin</span>
                     </motion.button>
                   ) : (
-                    <div className="hidden sm:flex items-center gap-1.5 bg-white border-2 border-black px-2.5 py-1 rounded-xl text-xs font-mono-clean font-bold shadow-[2px_2px_0px_#000]">
+                    <div className="flex items-center justify-center gap-1 bg-white border-2 border-black px-2 py-1 rounded-xl text-[11px] font-mono-clean font-bold shadow-[2px_2px_0px_#000] flex-1 truncate">
                       <span>{currentUser.avatar || '👨‍🎓'}</span>
-                      <span className="max-w-[70px] truncate">{currentUser.name}</span>
+                      <span className="truncate">{currentUser.name?.split(' ')[0]}</span>
                     </div>
                   )}
 
@@ -252,12 +251,11 @@ export default function Navbar({
                   onClick={onOpenAuthModal}
                   whileHover={{ scale: 1.03, y: -1 }}
                   whileTap={{ scale: 0.97 }}
-                  className="flex items-center justify-center gap-1.5 bg-white hover:bg-[#fef08a] border-2 border-black px-2.5 sm:px-3 py-1 rounded-xl text-xs font-mono-clean text-black font-extrabold shadow-[2px_2px_0px_#000000] cursor-pointer transition-colors whitespace-nowrap w-full"
+                  className="flex items-center justify-center gap-1.5 bg-white hover:bg-[#fef08a] border-2 border-black px-2 py-1 rounded-xl text-[11px] sm:text-xs font-mono-clean text-black font-black shadow-[2px_2px_0px_#000000] cursor-pointer transition-colors whitespace-nowrap w-full"
                   title="Log Masuk Portal (Email / Google)"
                 >
                   <LogIn className="w-3.5 h-3.5 text-black shrink-0" />
-                  <span className="hidden sm:inline">Log Masuk</span>
-                  <span className="sm:hidden">Login</span>
+                  <span>Log Masuk</span>
                 </motion.button>
               )}
 
