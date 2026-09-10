@@ -2,17 +2,19 @@ import { createClient } from '@supabase/supabase-js';
 
 // If Supabase environment variables are provided, initialize client.
 // Otherwise, smoothly fallback so the app works immediately out-of-the-box!
+const env = (typeof import.meta !== 'undefined' && import.meta.env) ? import.meta.env : (typeof process !== 'undefined' ? process.env : {});
+
 const supabaseUrl = 
-  import.meta.env.VITE_SUPABASE_URL || 
-  import.meta.env.NEXT_PUBLIC_SUPABASE_URL || 
-  import.meta.env.SUPABASE_URL || 
+  env.VITE_SUPABASE_URL || 
+  env.NEXT_PUBLIC_SUPABASE_URL || 
+  env.SUPABASE_URL || 
   'https://ubwmlexomazhgpkclgtx.supabase.co';
 
 const supabaseAnonKey = 
-  import.meta.env.VITE_SUPABASE_ANON_KEY || 
-  import.meta.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 
-  import.meta.env.SUPABASE_ANON_KEY || 
-  '';
+  env.VITE_SUPABASE_ANON_KEY || 
+  env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 
+  env.SUPABASE_ANON_KEY || 
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVid21sZXhvbWF6aGdwa2NsZ3R4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg5ODAyNTMsImV4cCI6MjEwNDU1NjI1M30.Cf7x3LXnIjzUmggQ_bd7Lqh5O-uQftHyjCv757Zo5CU';
 
 export const isSupabaseConfigured = Boolean(supabaseUrl && supabaseAnonKey);
 

@@ -1,8 +1,11 @@
 import { 
   petinamTeam as defaultPetinamTeam, 
   weeklyActivities as defaultWeeklyActivities, 
-  announcements as defaultAnnouncements 
-} from '../data/initialData';
+  announcements as defaultAnnouncements,
+  calendarEvents as defaultCalendarEvents,
+  academicSubjects as defaultAcademicSubjects
+} from '../data/initialData.js';
+import { supabase, isSupabaseConfigured } from './supabase.js';
 
 /**
  * Centralized Content Store for SMJK Chung Hwa Form 6 Portal
@@ -11,12 +14,103 @@ import {
  * 2. PETINAM Committee (High Committee & Exco)
  * 3. What's Happening This Week (Weekly Ticker)
  * 4. Announcements & Notices
+ * 5. STPM Countdown Config
+ * 6. Calendar Events
+ * 7. Academic Hub Subject Binders
  */
 
 const GALLERY_STORAGE_KEY = 'chung_hwa_gallery';
 const PETINAM_STORAGE_KEY = 'chung_hwa_petinam';
 const WEEKLY_STORAGE_KEY = 'chung_hwa_weekly';
 const ANNOUNCEMENTS_STORAGE_KEY = 'chung_hwa_announcements';
+const COUNTDOWN_STORAGE_KEY = 'chung_hwa_stpm_countdown';
+const CALENDAR_STORAGE_KEY = 'chung_hwa_custom_events';
+const ACADEMIC_STORAGE_KEY = 'chung_hwa_academic_subjects';
+
+/**
+ * Push updated module data to Supabase cloud table `site_content`
+ */
+export async function syncToCloud(key, data) {
+  if (isSupabaseConfigured && supabase) {
+    try {
+      await supabase
+        .from('site_content')
+        .upsert({ key, data, updated_at: new Date().toISOString() });
+    } catch (err) {
+      console.warn(`Failed to sync ${key} to Supabase:`, err);
+    }
+  }
+}
+
+/**
+ * Fetch all content modules from Supabase on application load
+ */
+export async function fetchRemoteSiteContent() {
+  if (!isSupabaseConfigured || !supabase) return null;
+  try {
+    const { data, error } = await supabase
+      .from('site_content')
+      .select('*');
+
+    if (!error && Array.isArray(data) && data.length > 0) {
+      data.forEach((row) => {
+        if (!row.key || !row.data) return;
+        try {
+          if (row.key === 'gallery') {
+            localStorage.setItem(GALLERY_STORAGE_KEY, JSON.stringify(row.data));
+          } else if (row.key === 'petinam') {
+            localStorage.setItem(PETINAM_STORAGE_KEY, JSON.stringify(row.data));
+          } else if (row.key === 'weekly') {
+            localStorage.setItem(WEEKLY_STORAGE_KEY, JSON.stringify(row.data));
+          } else if (row.key === 'announcements') {
+            localStorage.setItem(ANNOUNCEMENTS_STORAGE_KEY, JSON.stringify(row.data));
+          } else if (row.key === 'countdown') {
+            localStorage.setItem(COUNTDOWN_STORAGE_KEY, JSON.stringify(row.data));
+          } else if (row.key === 'calendar') {
+            localStorage.setItem(CALENDAR_STORAGE_KEY, JSON.stringify(row.data));
+          } else if (row.key === 'academic') {
+            localStorage.setItem(ACADEMIC_STORAGE_KEY, JSON.stringify(row.data));
+          }
+        } catch {}
+      });
+      emitContentUpdate();
+      return data;
+    }
+  } catch (err) {
+    console.warn('Failed to fetch site_content from Supabase:', err);
+  }
+  return null;
+}
+
+/**
+ * Seed initial default content to Supabase if table is empty
+ */
+export async function seedDefaultSiteContentIfEmpty() {
+  if (!isSupabaseConfigured || !supabase) return;
+  try {
+    const { data, error } = await supabase.from('site_content').select('key');
+    if (error) return;
+    const existingKeys = new Set((data || []).map((r) => r.key));
+
+    const seeds = [
+      { key: 'gallery', data: DEFAULT_GALLERY_ITEMS },
+      { key: 'petinam', data: defaultPetinamTeam },
+      { key: 'weekly', data: defaultWeeklyActivities },
+      { key: 'announcements', data: defaultAnnouncements },
+      { key: 'countdown', data: DEFAULT_COUNTDOWN_CONFIG },
+      { key: 'calendar', data: defaultCalendarEvents },
+      { key: 'academic', data: defaultAcademicSubjects },
+    ];
+
+    for (const item of seeds) {
+      if (!existingKeys.has(item.key)) {
+        await syncToCloud(item.key, item.data);
+      }
+    }
+  } catch (err) {
+    console.warn('Seed default site content skipped:', err);
+  }
+}
 
 // Seed authentic Form 6 photo memories
 export const DEFAULT_GALLERY_ITEMS = [
@@ -117,6 +211,7 @@ export function saveGalleryItems(items) {
   if (typeof window === 'undefined') return;
   try {
     localStorage.setItem(GALLERY_STORAGE_KEY, JSON.stringify(items));
+    syncToCloud('gallery', items);
     emitContentUpdate();
   } catch (err) {
     console.warn('Failed to save gallery items:', err);
@@ -186,6 +281,7 @@ export function savePetinamTeam(team) {
   if (typeof window === 'undefined') return;
   try {
     localStorage.setItem(PETINAM_STORAGE_KEY, JSON.stringify(team));
+    syncToCloud('petinam', team);
     emitContentUpdate();
   } catch (err) {
     console.warn('Failed to save petinam team:', err);
@@ -257,6 +353,7 @@ export function saveWeeklyActivities(activities) {
   if (typeof window === 'undefined') return;
   try {
     localStorage.setItem(WEEKLY_STORAGE_KEY, JSON.stringify(activities));
+    syncToCloud('weekly', activities);
     emitContentUpdate();
   } catch (err) {
     console.warn('Failed to save weekly activities:', err);
@@ -306,6 +403,7 @@ export function saveAnnouncements(annList) {
   if (typeof window === 'undefined') return;
   try {
     localStorage.setItem(ANNOUNCEMENTS_STORAGE_KEY, JSON.stringify(annList));
+    syncToCloud('announcements', annList);
     emitContentUpdate();
   } catch (err) {
     console.warn('Failed to save announcements:', err);
@@ -337,8 +435,6 @@ export function deleteAnnouncement(id) {
 // -------------------------------------------------------------
 // 5. STPM COUNTDOWN CONFIG (CENTRALIZED & ADMIN-CONTROLLED)
 // -------------------------------------------------------------
-const COUNTDOWN_STORAGE_KEY = 'chung_hwa_stpm_countdown';
-
 export const DEFAULT_COUNTDOWN_CONFIG = {
   examName: 'STPM Sem 3 (Tingkatan 6 Atas)',
   shortLabel: 'STPM Sem 3',
@@ -365,9 +461,123 @@ export function saveCountdownConfig(config) {
   if (typeof window === 'undefined') return;
   try {
     localStorage.setItem(COUNTDOWN_STORAGE_KEY, JSON.stringify(config));
+    syncToCloud('countdown', config);
     emitContentUpdate();
   } catch (err) {
     console.warn('Failed to save countdown config:', err);
   }
 }
+
+// -------------------------------------------------------------
+// 6. CALENDAR EVENTS CRUD
+// -------------------------------------------------------------
+export function getCalendarEvents() {
+  if (typeof window === 'undefined') return defaultCalendarEvents;
+  try {
+    const raw = localStorage.getItem(CALENDAR_STORAGE_KEY);
+    if (!raw) {
+      localStorage.setItem(CALENDAR_STORAGE_KEY, JSON.stringify(defaultCalendarEvents));
+      return defaultCalendarEvents;
+    }
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) && parsed.length > 0 ? parsed : defaultCalendarEvents;
+  } catch {
+    return defaultCalendarEvents;
+  }
+}
+
+export function saveCalendarEvents(events) {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem(CALENDAR_STORAGE_KEY, JSON.stringify(events));
+    syncToCloud('calendar', events);
+    emitContentUpdate();
+  } catch (err) {
+    console.warn('Failed to save calendar events:', err);
+  }
+}
+
+export function addCalendarEvent(eventData) {
+  const events = getCalendarEvents();
+  const newEv = {
+    id: 'ev_' + Date.now() + '_' + Math.random().toString(36).substring(2, 5),
+    ...eventData,
+  };
+  events.unshift(newEv);
+  saveCalendarEvents(events);
+  return newEv;
+}
+
+export function deleteCalendarEvent(id) {
+  const events = getCalendarEvents().filter((ev) => ev.id !== id);
+  saveCalendarEvents(events);
+}
+
+// -------------------------------------------------------------
+// 7. ACADEMIC HUB CRUD (SUBJECTS & RESOURCES)
+// -------------------------------------------------------------
+export function getAcademicSubjects() {
+  if (typeof window === 'undefined') return defaultAcademicSubjects;
+  try {
+    const raw = localStorage.getItem(ACADEMIC_STORAGE_KEY);
+    if (!raw) {
+      localStorage.setItem(ACADEMIC_STORAGE_KEY, JSON.stringify(defaultAcademicSubjects));
+      return defaultAcademicSubjects;
+    }
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) && parsed.length > 0 ? parsed : defaultAcademicSubjects;
+  } catch {
+    return defaultAcademicSubjects;
+  }
+}
+
+export function saveAcademicSubjects(subjects) {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem(ACADEMIC_STORAGE_KEY, JSON.stringify(subjects));
+    syncToCloud('academic', subjects);
+    emitContentUpdate();
+  } catch (err) {
+    console.warn('Failed to save academic subjects:', err);
+  }
+}
+
+export function addAcademicResource(subjectId, resourceData) {
+  const subjects = getAcademicSubjects();
+  const updated = subjects.map((sub) => {
+    if (sub.id === subjectId) {
+      const resources = Array.isArray(sub.resources) ? [...sub.resources] : [];
+      return {
+        ...sub,
+        resources: [
+          {
+            downloads: 0,
+            link: '#',
+            ...resourceData,
+          },
+          ...resources,
+        ],
+      };
+    }
+    return sub;
+  });
+  saveAcademicSubjects(updated);
+}
+
+export function deleteAcademicResource(subjectId, resourceIndex) {
+  const subjects = getAcademicSubjects();
+  const updated = subjects.map((sub) => {
+    if (sub.id === subjectId && Array.isArray(sub.resources)) {
+      const copy = [...sub.resources];
+      copy.splice(resourceIndex, 1);
+      return {
+        ...sub,
+        resources: copy,
+      };
+    }
+    return sub;
+  });
+  saveAcademicSubjects(updated);
+}
+
 

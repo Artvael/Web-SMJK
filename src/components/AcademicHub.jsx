@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
 import { 
@@ -12,13 +12,34 @@ import {
   Flame,
   Star
 } from 'lucide-react';
-import { academicSubjects } from '../data/initialData';
+import { getAcademicSubjects } from '../lib/contentStore';
 
 export default function AcademicHub() {
-  const [activeSubjectId, setActiveSubjectId] = useState(academicSubjects[0].id);
+  const [subjects, setSubjects] = useState(() => getAcademicSubjects());
+  const [activeSubjectId, setActiveSubjectId] = useState(() => (getAcademicSubjects()[0]?.id || 'pa'));
   const [downloadingTitle, setDownloadingTitle] = useState(null);
 
-  const activeSubject = academicSubjects.find((s) => s.id === activeSubjectId) || academicSubjects[0];
+  useEffect(() => {
+    const handleUpdate = () => {
+      const fresh = getAcademicSubjects();
+      setSubjects(fresh);
+    };
+    window.addEventListener('content_updated', handleUpdate);
+    window.addEventListener('storage', handleUpdate);
+    return () => {
+      window.removeEventListener('content_updated', handleUpdate);
+      window.removeEventListener('storage', handleUpdate);
+    };
+  }, []);
+
+  const activeSubject = subjects.find((s) => s.id === activeSubjectId) || subjects[0] || {
+    id: 'pa',
+    name: 'Subject',
+    code: '000',
+    badge: 'General',
+    description: '',
+    resources: []
+  };
 
   const subjectColors = {
     pa: 'bg-[#fde047]', // Yellow
@@ -74,7 +95,7 @@ export default function AcademicHub() {
 
         {/* Interactive Chunky Binder Tabs */}
         <div className="flex items-center gap-3 overflow-x-auto pb-4 mb-8 no-scrollbar">
-          {academicSubjects.map((sub) => {
+          {subjects.map((sub) => {
             const isActive = sub.id === activeSubjectId;
             const color = subjectColors[sub.id] || 'bg-[#fef08a]';
             return (

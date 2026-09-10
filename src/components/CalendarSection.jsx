@@ -7,11 +7,12 @@ import {
   Download,
   CheckCircle2
 } from 'lucide-react';
-import { calendarEvents } from '../data/initialData';
 import { downloadAllEventsIcs } from '../lib/calendarUtils';
+import { getCalendarEvents } from '../lib/contentStore';
 import NotifyModal from './NotifyModal';
 
 export default function CalendarSection() {
+  const [events, setEvents] = useState(() => getCalendarEvents());
   const [selectedCategory, setSelectedCategory] = useState('ALL');
   const [activeModalEvent, setActiveModalEvent] = useState(null);
   const [notifiedMap, setNotifiedMap] = useState({});
@@ -21,6 +22,17 @@ export default function CalendarSection() {
       const saved = JSON.parse(localStorage.getItem('chung_hwa_notified_events') || '{}');
       setNotifiedMap(saved);
     } catch {}
+
+    const handleSync = () => {
+      setEvents(getCalendarEvents());
+    };
+
+    window.addEventListener('content_updated', handleSync);
+    window.addEventListener('storage', handleSync);
+    return () => {
+      window.removeEventListener('content_updated', handleSync);
+      window.removeEventListener('storage', handleSync);
+    };
   }, []);
 
   const toggleEventNotification = (ev, e) => {
@@ -36,7 +48,7 @@ export default function CalendarSection() {
   };
 
   const handleDownloadAll = () => {
-    downloadAllEventsIcs(calendarEvents);
+    downloadAllEventsIcs(events);
   };
 
   const categories = [
@@ -49,7 +61,7 @@ export default function CalendarSection() {
     { id: 'Competition', label: '🟠 Competitions', bg: 'bg-[#fb923c] text-black' },
   ];
 
-  const filteredEvents = calendarEvents.filter((ev) => {
+  const filteredEvents = events.filter((ev) => {
     if (selectedCategory === 'ALL') return true;
     return ev.category === selectedCategory;
   });

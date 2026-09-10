@@ -20,6 +20,8 @@ import AdminDashboard from './components/AdminDashboard';
 import AuthModal from './components/AuthModal';
 import Preloader from './components/Preloader';
 import { getCurrentUser, trackPageView, logoutUser } from './lib/authStore';
+import { fetchRemoteStudentFeedback } from './lib/supabase';
+import { fetchRemoteSiteContent, seedDefaultSiteContentIfEmpty } from './lib/contentStore';
 import { ArrowUp, ArrowLeft, Sparkles } from 'lucide-react';
 
 export default function App() {
@@ -60,6 +62,12 @@ export default function App() {
   useEffect(() => {
     // Record page view analytics
     trackPageView();
+
+    // Sync cloud content & student voices from Supabase
+    fetchRemoteStudentFeedback();
+    fetchRemoteSiteContent().then(() => {
+      seedDefaultSiteContentIfEmpty();
+    });
 
     const handleHashChange = () => {
       if (window.location.hash === '#admin') {

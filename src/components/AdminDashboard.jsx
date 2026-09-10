@@ -18,7 +18,8 @@ import {
   Crown,
   Clock,
   Bell,
-  BellRing
+  BellRing,
+  BookOpen
 } from 'lucide-react';
 import { 
   getTrafficStats, 
@@ -39,10 +40,13 @@ import AdminGalleryTab from './admin/AdminGalleryTab';
 import AdminPetinamTab from './admin/AdminPetinamTab';
 import AdminWeeklyTab from './admin/AdminWeeklyTab';
 import AdminAnnouncementsTab from './admin/AdminAnnouncementsTab';
+import AdminAcademicTab from './admin/AdminAcademicTab';
 import { 
   getCountdownConfig, 
   saveCountdownConfig, 
-  DEFAULT_COUNTDOWN_CONFIG 
+  DEFAULT_COUNTDOWN_CONFIG,
+  getCalendarEvents,
+  saveCalendarEvents
 } from '../lib/contentStore';
 
 export default function AdminDashboard({ currentUser, onBackToSite, onLogout }) {
@@ -70,14 +74,7 @@ export default function AdminDashboard({ currentUser, onBackToSite, onLogout }) 
     setTimeout(() => setCountdownSavedMsg(''), 3000);
   };
 
-  const [calendarList, setCalendarList] = useState(() => {
-    try {
-      const saved = localStorage.getItem('chung_hwa_custom_events');
-      return saved ? JSON.parse(saved) : initialEvents;
-    } catch {
-      return initialEvents;
-    }
-  });
+  const [calendarList, setCalendarList] = useState(() => getCalendarEvents());
 
   // Moderation state
   const [searchNotes, setSearchNotes] = useState('');
@@ -102,6 +99,18 @@ export default function AdminDashboard({ currentUser, onBackToSite, onLogout }) 
     fetchRemoteStudentFeedback().then((remote) => {
       if (remote) setNotes(remote);
     });
+
+    const handleContentUpdate = () => {
+      setCalendarList(getCalendarEvents());
+      setCountdownForm(getCountdownConfig());
+    };
+
+    window.addEventListener('content_updated', handleContentUpdate);
+    window.addEventListener('storage', handleContentUpdate);
+    return () => {
+      window.removeEventListener('content_updated', handleContentUpdate);
+      window.removeEventListener('storage', handleContentUpdate);
+    };
   }, []);
 
   // Delete individual activity log
@@ -197,9 +206,7 @@ export default function AdminDashboard({ currentUser, onBackToSite, onLogout }) 
 
     const updated = [newEv, ...calendarList];
     setCalendarList(updated);
-    try {
-      localStorage.setItem('chung_hwa_custom_events', JSON.stringify(updated));
-    } catch {}
+    saveCalendarEvents(updated);
 
     setNewEvTitle('');
     setNewEvDate('');
@@ -213,9 +220,7 @@ export default function AdminDashboard({ currentUser, onBackToSite, onLogout }) 
     if (!window.confirm('Padamkan acara ini daripada takwim?')) return;
     const updated = calendarList.filter((ev) => ev.id !== id);
     setCalendarList(updated);
-    try {
-      localStorage.setItem('chung_hwa_custom_events', JSON.stringify(updated));
-    } catch {}
+    saveCalendarEvents(updated);
   };
 
   const handleLogoutClick = () => {
@@ -304,6 +309,7 @@ export default function AdminDashboard({ currentUser, onBackToSite, onLogout }) 
             { id: 'announcements', label: '📢 Pengumuman', icon: BellRing, bg: 'bg-[#fbcfe8]' },
             { id: 'feedback', label: 'Pengurusan Suara Pelajar', icon: MessageSquare, bg: 'bg-[#f472b6]' },
             { id: 'calendar', label: 'Pengurusan Takwim', icon: Calendar, bg: 'bg-[#4ade80]' },
+            { id: 'academic', label: '📚 Modul Akademik', icon: BookOpen, bg: 'bg-[#bae6fd]' },
             { id: 'users', label: 'Log Pengguna & Aktiviti', icon: Users, bg: 'bg-[#67e8f9]' },
           ].map((tab) => {
             const isSelected = activeTab === tab.id;
@@ -1066,6 +1072,17 @@ export default function AdminDashboard({ currentUser, onBackToSite, onLogout }) 
             transition={{ duration: 0.25 }}
           >
             <AdminAnnouncementsTab />
+          </motion.div>
+        )}
+
+        {/* TAB: ACADEMIC HUB MANAGEMENT */}
+        {activeTab === 'academic' && (
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.25 }}
+          >
+            <AdminAcademicTab />
           </motion.div>
         )}
 
