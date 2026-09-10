@@ -8,4 +8,5 @@ export default defineConfig({
     tailwindcss(),
     react(),
   ],
+  envPrefix: ['VITE_', 'NEXT_PUBLIC_', 'SUPABASE_'],
 })
