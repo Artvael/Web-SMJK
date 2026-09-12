@@ -12,13 +12,14 @@ import {
   ShieldCheck
 } from 'lucide-react';
 import { loginWithEmail, registerWithEmail, signInWithGoogle } from '../lib/authStore';
+import { FORM_6_CLASSES } from '../data/initialData';
 
 export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
   const [mode, setMode] = useState('login'); // 'login' | 'register'
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
-  const [studentClass, setStudentClass] = useState('Upper 6 Science 1 (6S1)');
+  const [studentClass, setStudentClass] = useState(FORM_6_CLASSES[0]);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
@@ -282,13 +283,9 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }) {
                     onChange={(e) => setStudentClass(e.target.value)}
                     className="w-full bg-slate-50 pl-9 pr-3 py-2.5 rounded-xl border-2 border-black text-xs font-bold text-black focus:outline-none shadow-[2px_2px_0px_#000] cursor-pointer"
                   >
-                    <option>Upper 6 Science 1 (6S1)</option>
-                    <option>Upper 6 Science 2 (6S2)</option>
-                    <option>Upper 6 Arts 1 (6A1)</option>
-                    <option>Upper 6 Arts 2 (6A2)</option>
-                    <option>Lower 6 Science 1</option>
-                    <option>Lower 6 Arts 1</option>
-                    <option>Majlis Pentadbiran PETINAM</option>
+                    {FORM_6_CLASSES.map((cls) => (
+                      <option key={cls} value={cls}>{cls}</option>
+                    ))}
                   </select>
                 </div>
               </div>

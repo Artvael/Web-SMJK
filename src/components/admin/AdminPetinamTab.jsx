@@ -18,6 +18,7 @@ import {
   updatePetinamMember, 
   deletePetinamMember 
 } from '../../lib/contentStore';
+import { SHORT_CLASSES } from '../../data/initialData';
 
 const COLOR_OPTIONS = [
   { label: 'Kuning (President)', value: 'bg-[#fef08a]' },
@@ -232,16 +233,39 @@ export default function AdminPetinamTab() {
 
                 {/* Class */}
                 <div>
-                  <label className="block text-xs font-mono-clean font-black text-black uppercase mb-1">
-                    Kelas Tingkatan 6
-                  </label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="block text-xs font-mono-clean font-black text-black uppercase">
+                      Kelas Tingkatan 6
+                    </label>
+                    <span className="text-[10px] text-slate-500 font-bold">Pilih pantas:</span>
+                  </div>
                   <input
                     type="text"
+                    list="petinam-class-options"
                     value={memberClass}
                     onChange={(e) => setMemberClass(e.target.value)}
-                    placeholder="Contoh: Upper 6 Science 1 (6S1)"
+                    placeholder="Contoh: L6SB, L6SP, L6A1, L6A2, L6A3, U6SB..."
                     className="w-full bg-white text-black font-bold text-xs p-2.5 rounded-xl border-2 border-black shadow-[2px_2px_0px_#000] focus:outline-none"
                   />
+                  <datalist id="petinam-class-options">
+                    {SHORT_CLASSES.map((c) => (
+                      <option key={c} value={c} />
+                    ))}
+                  </datalist>
+                  <div className="flex flex-wrap gap-1 mt-1.5">
+                    {SHORT_CLASSES.map((c) => (
+                      <button
+                        key={c}
+                        type="button"
+                        onClick={() => setMemberClass(c)}
+                        className={`text-[10px] font-mono-clean font-black px-2 py-0.5 rounded border border-black cursor-pointer transition-colors ${
+                          memberClass === c ? 'bg-black text-white' : 'bg-slate-100 hover:bg-slate-200 text-black'
+                        }`}
+                      >
+                        {c}
+                      </button>
+                    ))}
+                  </div>
                 </div>
 
                 {/* Card Color */}
@@ -524,16 +548,39 @@ export default function AdminPetinamTab() {
 
                 {/* Class */}
                 <div>
-                  <label className="block text-[11px] font-mono-clean font-black text-black uppercase mb-1">
-                    Kelas Tingkatan 6
-                  </label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="block text-[11px] font-mono-clean font-black text-black uppercase">
+                      Kelas Tingkatan 6
+                    </label>
+                    <span className="text-[10px] text-slate-500 font-bold">Pilih pantas:</span>
+                  </div>
                   <input
                     type="text"
+                    list="petinam-edit-class-options"
                     value={editingMember.class || ''}
-                    placeholder="Contoh: L6SB, L6A1, L6SP, L6A3"
+                    placeholder="Contoh: L6SB, L6SP, L6A1, L6A2, L6A3, U6SB..."
                     onChange={(e) => setEditingMember({ ...editingMember, class: e.target.value })}
                     className="w-full bg-white text-black font-bold text-xs p-2 rounded-lg border-2 border-black"
                   />
+                  <datalist id="petinam-edit-class-options">
+                    {SHORT_CLASSES.map((c) => (
+                      <option key={c} value={c} />
+                    ))}
+                  </datalist>
+                  <div className="flex flex-wrap gap-1 mt-1.5">
+                    {SHORT_CLASSES.map((c) => (
+                      <button
+                        key={c}
+                        type="button"
+                        onClick={() => setEditingMember({ ...editingMember, class: c })}
+                        className={`text-[10px] font-mono-clean font-black px-2 py-0.5 rounded border border-black cursor-pointer transition-colors ${
+                          editingMember.class === c ? 'bg-black text-white' : 'bg-slate-100 hover:bg-slate-200 text-black'
+                        }`}
+                      >
+                        {c}
+                      </button>
+                    ))}
+                  </div>
                 </div>
 
                 {/* Avatar Icon */}

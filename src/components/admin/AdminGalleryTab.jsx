@@ -228,7 +228,7 @@ export default function AdminGalleryTab() {
                     type="text"
                     value={batch}
                     onChange={(e) => setBatch(e.target.value)}
-                    placeholder="Contoh: Upper 6 Science 1 (6S1)"
+                    placeholder="Contoh: Lower 6 Science Biology (L6SB)"
                     className="w-full bg-white text-black font-bold text-xs p-2.5 rounded-xl border-2 border-black shadow-[2px_2px_0px_#000] focus:outline-none"
                   />
                 </div>

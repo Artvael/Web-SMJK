@@ -10,13 +10,14 @@ import {
 } from 'lucide-react';
 import { submitStudentFeedback, getStudentFeedback, fetchRemoteStudentFeedback } from '../lib/supabase';
 import { recordActivityLog } from '../lib/authStore';
+import { FORM_6_CLASSES } from '../data/initialData';
 import VoiceBoard from './VoiceBoard';
 
 export default function StudentVoice() {
   const [category, setCategory] = useState('Suggestion');
   const [name, setName] = useState('');
   const [isAnonymous, setIsAnonymous] = useState(false);
-  const [studentClass, setStudentClass] = useState('Upper 6 Science 1 (6S1)');
+  const [studentClass, setStudentClass] = useState(FORM_6_CLASSES[0]);
   const [title, setTitle] = useState('');
   const [message, setMessage] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -274,13 +275,9 @@ export default function StudentVoice() {
                     onChange={(e) => setStudentClass(e.target.value)}
                     className="w-full px-4 py-2.5 bg-slate-50 rounded-xl border-2 border-black text-xs font-bold text-black focus:outline-none shadow-[2px_2px_0px_#000] cursor-pointer"
                   >
-                    <option>Upper 6 Science 1 (6S1)</option>
-                    <option>Upper 6 Science 2 (6S2)</option>
-                    <option>Upper 6 Arts 1 (6A1)</option>
-                    <option>Upper 6 Arts 2 (6A2)</option>
-                    <option>Lower 6 Science 1</option>
-                    <option>Lower 6 Arts 1</option>
-                    <option>General Form 6 Student</option>
+                    {FORM_6_CLASSES.map((cls) => (
+                      <option key={cls} value={cls}>{cls}</option>
+                    ))}
                   </select>
                 </div>
               </div>

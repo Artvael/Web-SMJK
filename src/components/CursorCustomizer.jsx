@@ -17,7 +17,7 @@ export default function CursorCustomizer({
     { id: 'purple', hex: '#c084fc', label: 'Lilac Purple' },
   ];
 
-  const presets = ['Sophie', 'You (6S1)', 'PETINAM', 'Chung Hwa'];
+  const presets = ['Sophie', 'You (L6SB)', 'PETINAM', 'Chung Hwa'];
 
   return (
     <div className="fixed bottom-6 left-6 z-40 hidden sm:block">

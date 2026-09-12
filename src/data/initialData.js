@@ -19,6 +19,33 @@ export const schoolInfo = {
   logoUrl: "/smjk-chung-hwa-kelantan-logo.png",
 };
 
+export const FORM_6_CLASSES = [
+  "Lower 6 Science Biology (L6SB)",
+  "Lower 6 Science Physics (L6SP)",
+  "Lower Six Arts 1 (L6A1)",
+  "Lower Six Arts 2 (L6A2)",
+  "Lower 6 Arts 3 (L6A3)",
+  "Upper 6 Science Biology (U6SB)",
+  "Upper 6 Science Physics (U6SP)",
+  "Upper Six Arts 1 (U6A1)",
+  "Upper Six Arts 2 (U6A2)",
+  "Upper 6 Arts 3 (U6A3)",
+  "General Form 6 Student"
+];
+
+export const SHORT_CLASSES = [
+  "L6SB",
+  "L6SP",
+  "L6A1",
+  "L6A2",
+  "L6A3",
+  "U6SB",
+  "U6SP",
+  "U6A1",
+  "U6A2",
+  "U6A3"
+];
+
 export const weeklyActivities = [
   {
     id: "w1",

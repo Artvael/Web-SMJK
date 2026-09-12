@@ -38,7 +38,7 @@ const DEFAULT_USERS = [
     passHash: 'dmFubmllMTIz', // 'vannie123'
     role: 'admin',
     method: 'google',
-    studentClass: 'Upper 6 Science 1 (6S1)',
+    studentClass: 'Lower 6 Science Biology (L6SB)',
     avatar: '👩‍💼',
     registered_at: new Date(Date.now() - 3600000 * 24 * 5).toISOString(),
   },
@@ -49,7 +49,7 @@ const DEFAULT_USERS = [
     passHash: 'c3R1ZGVudDEyMw==', // 'student123'
     role: 'student',
     method: 'email',
-    studentClass: 'Upper 6 Science 1 (6S1)',
+    studentClass: 'Lower 6 Science Biology (L6SB)',
     avatar: '👨‍🎓',
     registered_at: new Date(Date.now() - 3600000 * 20).toISOString(),
   }
@@ -307,7 +307,7 @@ export async function loginWithEmail(email, password) {
 /**
  * Register a new user with Email and Password
  */
-export async function registerWithEmail(name, email, password, studentClass = 'General Form 6') {
+export async function registerWithEmail(name, email, password, studentClass = 'General Form 6 Student') {
   const cleanEmail = email.trim().toLowerCase();
   const cleanName = name.trim();
   const cleanPass = password.trim();
