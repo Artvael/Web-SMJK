@@ -73,6 +73,7 @@ export default function AdminPetinamTab() {
       addPetinamMember('exco', {
         name: name.trim(),
         role: role.trim(),
+        class: memberClass.trim() || 'L6',
         icon: avatar,
         color,
         desc: quote.trim() || 'Memimpin inisiatif biro bagi memperkasa pelajar Form 6.',
@@ -415,6 +416,11 @@ export default function AdminPetinamTab() {
                     <h4 className="font-mono-clean font-black text-sm text-black leading-tight">
                       {exco.name}
                     </h4>
+                    {exco.class && (
+                      <span className="text-[10px] font-mono-clean font-black text-black bg-white px-1.5 py-0.5 rounded border border-black shadow-[1px_1px_0px_#000] inline-block mt-1">
+                        Kelas: {exco.class}
+                      </span>
+                    )}
                   </div>
                 </div>
 
@@ -514,6 +520,20 @@ export default function AdminPetinamTab() {
                       ))}
                     </select>
                   </div>
+                </div>
+
+                {/* Class */}
+                <div>
+                  <label className="block text-[11px] font-mono-clean font-black text-black uppercase mb-1">
+                    Kelas Tingkatan 6
+                  </label>
+                  <input
+                    type="text"
+                    value={editingMember.class || ''}
+                    placeholder="Contoh: L6SB, L6A1, L6SP, L6A3"
+                    onChange={(e) => setEditingMember({ ...editingMember, class: e.target.value })}
+                    className="w-full bg-white text-black font-bold text-xs p-2 rounded-lg border-2 border-black"
+                  />
                 </div>
 
                 {/* Avatar Icon */}

@@ -10,7 +10,8 @@ import {
   Layers, 
   Sparkles,
   Flame,
-  Star
+  Star,
+  FileCheck
 } from 'lucide-react';
 import { getAcademicSubjects } from '../lib/contentStore';
 
@@ -43,14 +44,23 @@ export default function AcademicHub() {
 
   const subjectColors = {
     pa: 'bg-[#fde047]', // Yellow
-    chem: 'bg-[#67e8f9]', // Cyan
+    pp: 'bg-[#fed7aa]', // Peach
+    sej: 'bg-[#fbcfe8]', // Pink
+    eko: 'bg-[#c4b5fd]', // Lavender
+    matht: 'bg-[#67e8f9]', // Cyan
+    mathm: 'bg-[#bae6fd]', // Sky Blue
+    bm: 'bg-[#fef08a]', // Yellow
+    bc: 'bg-[#fecdd3]', // Rose
+    kimia: 'bg-[#67e8f9]', // Cyan
+    fizik: 'bg-[#a5f3fc]', // Electric Cyan
     bio: 'bg-[#4ade80]', // Green
-    math: 'bg-[#c084fc]', // Purple
-    muet: 'bg-[#f472b6]', // Pink
+    muet: 'bg-[#f472b6]', // Hot Pink
+    chem: 'bg-[#67e8f9]',
+    math: 'bg-[#67e8f9]',
   };
 
-  const handleDownload = (title) => {
-    setDownloadingTitle(title);
+  const handleDownload = (res) => {
+    setDownloadingTitle(res.title);
     try {
       confetti({
         particleCount: 25,
@@ -59,6 +69,17 @@ export default function AcademicHub() {
         colors: ['#facc15', '#38bdf8', '#4ade80', '#f472b6'],
       });
     } catch (e) {}
+
+    if (res.pdfData) {
+      const link = document.createElement('a');
+      link.href = res.pdfData;
+      link.download = res.fileName || `${res.title.replace(/[^a-zA-Z0-9_-]/g, '_')}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } else if (res.link && res.link !== '#') {
+      window.open(res.link, '_blank');
+    }
 
     setTimeout(() => {
       setDownloadingTitle(null);
@@ -166,16 +187,23 @@ export default function AcademicHub() {
                   <h4 className="text-sm sm:text-base font-black text-black leading-snug hover:text-blue-600 transition-colors">
                     {res.title}
                   </h4>
+
+                  {res.pdfData && (
+                    <div className="mt-2 inline-flex items-center gap-1 text-[10px] font-mono-clean font-bold bg-[#bbf7d0] text-emerald-950 px-2 py-0.5 rounded border border-black shadow-[1px_1px_0px_#000]">
+                      <FileCheck className="w-3 h-3 text-emerald-700" />
+                      <span>PDF Tersemat Siap Muat Turun</span>
+                    </div>
+                  )}
                 </div>
 
                 {/* Bottom Action */}
                 <div className="mt-5 pt-3 border-t-2 border-black flex items-center justify-between">
                   <span className="text-[11px] text-black font-mono-clean font-bold">
-                    {res.downloads} downloads
+                    {res.downloads || 0} downloads
                   </span>
 
                   <button
-                    onClick={() => handleDownload(res.title)}
+                    onClick={() => handleDownload(res)}
                     className="neo-btn bg-[#67e8f9] hover:bg-[#38bdf8] text-black text-xs px-3 py-1.5 gap-1.5"
                   >
                     {downloadingTitle === res.title ? (
@@ -186,7 +214,7 @@ export default function AcademicHub() {
                     ) : (
                       <>
                         <Download className="w-3.5 h-3.5" />
-                        <span>Get PDF</span>
+                        <span>{res.pdfData ? 'Muat Turun PDF' : 'Get PDF'}</span>
                       </>
                     )}
                   </button>

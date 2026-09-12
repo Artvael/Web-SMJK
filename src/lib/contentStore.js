@@ -436,10 +436,10 @@ export function deleteAnnouncement(id) {
 // 5. STPM COUNTDOWN CONFIG (CENTRALIZED & ADMIN-CONTROLLED)
 // -------------------------------------------------------------
 export const DEFAULT_COUNTDOWN_CONFIG = {
-  examName: 'STPM Sem 3 (Tingkatan 6 Atas)',
-  shortLabel: 'STPM Sem 3',
-  targetDate: '2026-11-16T08:00:00',
-  description: 'Peperiksaan bertulis Semester 3 STPM (Kohort 2026) anjuran Majlis Peperiksaan Malaysia (MPM).',
+  examName: 'Percubaan STPM Sem 3 (Tingkatan 6 Atas)',
+  shortLabel: 'Percubaan Sem 3',
+  targetDate: '2026-09-27T08:00:00',
+  description: 'Peperiksaan Percubaan STPM Semester 3 (27 Sep - 1 Okt 2026) SMJK Chung Hwa Kelantan.',
 };
 
 export function getCountdownConfig() {

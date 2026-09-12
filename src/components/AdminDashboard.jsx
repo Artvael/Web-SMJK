@@ -811,40 +811,40 @@ export default function AdminDashboard({ currentUser, onBackToSite, onLogout }) 
                   <button
                     type="button"
                     onClick={() => handleApplyPreset({
-                      examName: 'STPM 2026 Semester 3 (Tingkatan 6 Atas)',
-                      shortLabel: 'STPM Sem 3',
-                      targetDate: '2026-11-16T08:00:00',
-                      description: 'Peperiksaan bertulis Semester 3 STPM (Kohort 2026) anjuran Majlis Peperiksaan Malaysia (MPM).',
+                      examName: 'Percubaan STPM Sem 3 (Tingkatan 6 Atas)',
+                      shortLabel: 'Percubaan Sem 3',
+                      targetDate: '2026-09-27T08:00:00',
+                      description: 'Peperiksaan Percubaan STPM Semester 3 (27 Sep - 1 Okt 2026) SMJK Chung Hwa Kelantan.',
                     })}
                     className="neo-btn bg-white hover:bg-[#fde047] text-black text-xs font-bold px-3 py-1.5 shadow-[2px_2px_0px_#000]"
                   >
-                    🔴 STPM Sem 3 (16 Nov 2026 • 68 hari)
+                    🟡 Percubaan STPM Sem 3 (27 Sep - 1 Okt 2026)
                   </button>
 
                   <button
                     type="button"
                     onClick={() => handleApplyPreset({
-                      examName: 'STPM 2027 Semester 1 (Tingkatan 6 Rendah)',
-                      shortLabel: 'STPM Sem 1',
-                      targetDate: '2027-01-18T08:00:00',
-                      description: 'Peperiksaan bertulis Semester 1 STPM untuk kemasukan Tingkatan 6 Rendah anjuran MPM.',
+                      examName: 'Percubaan STPM Sem 1 (Tingkatan 6 Rendah)',
+                      shortLabel: 'Percubaan Sem 1',
+                      targetDate: '2026-10-04T08:00:00',
+                      description: 'Peperiksaan Percubaan STPM Semester 1 (4 Okt - 8 Okt 2026) SMJK Chung Hwa Kelantan.',
                     })}
                     className="neo-btn bg-white hover:bg-[#bae6fd] text-black text-xs font-bold px-3 py-1.5 shadow-[2px_2px_0px_#000]"
                   >
-                    🔵 STPM Sem 1 (18 Jan 2027 • ~132 hari)
+                    🔵 Percubaan STPM Sem 1 (4 Okt - 8 Okt 2026)
                   </button>
 
                   <button
                     type="button"
                     onClick={() => handleApplyPreset({
-                      examName: 'Peperiksaan Percubaan STPM Kelantan (Trial)',
-                      shortLabel: 'Trial STPM',
-                      targetDate: '2026-10-12T08:00:00',
-                      description: 'Peperiksaan percubaan dalaman peringkat negeri bagi persediaan menghadapi STPM sebenar.',
+                      examName: 'STPM 2026 Semester 3 (Sebenar)',
+                      shortLabel: 'STPM Sem 3',
+                      targetDate: '2026-11-16T08:00:00',
+                      description: 'Peperiksaan bertulis Semester 3 STPM Kohort 2026 rasmi Majlis Peperiksaan Malaysia (MPM).',
                     })}
                     className="neo-btn bg-white hover:bg-[#fbcfe8] text-black text-xs font-bold px-3 py-1.5 shadow-[2px_2px_0px_#000]"
                   >
-                    🟡 Percubaan STPM (12 Okt 2026 • ~34 hari)
+                    🔴 STPM Sem 3 Sebenar (16 Nov 2026)
                   </button>
                 </div>
               </div>

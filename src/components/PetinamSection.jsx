@@ -210,6 +210,11 @@ export default function PetinamSection() {
                           <h4 className="font-black text-sm text-black leading-tight">
                             {exco.name}
                           </h4>
+                          {exco.class && (
+                            <span className="inline-block text-[10px] font-mono-clean font-black bg-white text-black px-1.5 py-0.5 rounded border border-black shadow-[1px_1px_0px_#000] mt-1">
+                              Kelas: {exco.class}
+                            </span>
+                          )}
                         </div>
                       </div>
                       <p className="text-xs font-bold text-slate-800 leading-relaxed mt-2 pt-2 border-t border-black/20">
