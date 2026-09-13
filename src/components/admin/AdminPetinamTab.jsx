@@ -451,6 +451,24 @@ export default function AdminPetinamTab() {
                 <p className="text-xs text-slate-800 font-medium leading-relaxed bg-white/60 p-2 rounded-lg border border-black/15">
                   {exco.desc}
                 </p>
+
+                {/* 4 Committee Members */}
+                {Array.isArray(exco.members) && exco.members.length > 0 && (
+                  <div className="mt-2.5 bg-white/90 p-2.5 rounded-xl border border-black space-y-1.5 shadow-[1px_1px_0px_#000]">
+                    <span className="text-[10px] font-mono-clean font-black text-slate-700 uppercase block border-b border-black/15 pb-1">
+                      Ahli Jawatankuasa ({exco.members.length}):
+                    </span>
+                    {exco.members.map((m, mIdx) => (
+                      <div key={mIdx} className="flex items-center justify-between text-[11px] font-bold border-b border-black/10 last:border-0 pb-1 last:pb-0">
+                        <span className="text-[10px] font-mono-clean text-slate-600 w-24 shrink-0">{m.role}:</span>
+                        <span className="truncate mx-1 text-black font-extrabold">{m.name}</span>
+                        <span className="text-[9px] font-mono-clean font-black bg-black text-white px-1.5 py-0.2 rounded shrink-0">
+                          {m.class}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
               <div className="pt-2 mt-3 border-t border-black/20 flex items-center justify-between gap-1.5">
@@ -605,7 +623,7 @@ export default function AdminPetinamTab() {
                     {editingMember.group === 'high' ? 'Kutipan Aspirasi' : 'Deskripsi Tugas'}
                   </label>
                   <textarea
-                    rows="3"
+                    rows="2"
                     value={editingMember.quote || editingMember.desc || ''}
                     onChange={(e) => setEditingMember({ 
                       ...editingMember, 
@@ -615,6 +633,56 @@ export default function AdminPetinamTab() {
                     className="w-full bg-white text-black font-bold text-xs p-2 rounded-lg border-2 border-black"
                   />
                 </div>
+
+                {/* Bureau Committee Members (For Exco) */}
+                {Array.isArray(editingMember.members) && editingMember.members.length > 0 && (
+                  <div className="p-3 bg-slate-50 border-2 border-black rounded-xl space-y-2">
+                    <label className="block text-[11px] font-mono-clean font-black text-black uppercase">
+                      4 Ahli Jawatankuasa Biro (Jawatan • Nama • Kelas)
+                    </label>
+                    <div className="space-y-1.5">
+                      {editingMember.members.map((mem, mIdx) => (
+                        <div key={mIdx} className="grid grid-cols-12 gap-1.5 items-center">
+                          <input
+                            type="text"
+                            value={mem.role}
+                            onChange={(e) => {
+                              const updated = [...editingMember.members];
+                              updated[mIdx] = { ...updated[mIdx], role: e.target.value };
+                              setEditingMember({ ...editingMember, members: updated });
+                            }}
+                            className="col-span-4 bg-white text-black font-bold text-[11px] p-1.5 rounded border border-black"
+                            placeholder="Jawatan"
+                          />
+                          <input
+                            type="text"
+                            value={mem.name}
+                            onChange={(e) => {
+                              const updated = [...editingMember.members];
+                              updated[mIdx] = { ...updated[mIdx], name: e.target.value };
+                              const extra = mIdx === 0 ? { name: e.target.value } : {};
+                              setEditingMember({ ...editingMember, ...extra, members: updated });
+                            }}
+                            className="col-span-5 bg-white text-black font-bold text-[11px] p-1.5 rounded border border-black"
+                            placeholder="Nama"
+                          />
+                          <input
+                            type="text"
+                            value={mem.class}
+                            onChange={(e) => {
+                              const updated = [...editingMember.members];
+                              updated[mIdx] = { ...updated[mIdx], class: e.target.value };
+                              const extra = mIdx === 0 ? { class: e.target.value } : {};
+                              setEditingMember({ ...editingMember, ...extra, members: updated });
+                            }}
+                            className="col-span-3 bg-white text-black font-bold text-[11px] p-1.5 rounded border border-black"
+                            placeholder="Kelas"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
                 <div className="flex justify-end gap-2 pt-2 border-t-2 border-black/10">
                   <button

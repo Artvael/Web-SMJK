@@ -525,11 +525,11 @@ export const calendarEvents = [
 
 export const petinamTeam = {
   "mission": "Your Voice. Your Future. Our Journey.",
-  "description": "PETINAM (Persatuan Tingkatan Enam SMJK Chung Hwa Kelantan) merupakan Majlis Perwakilan Pelajar rasmi Tingkatan 6 yang berdedikasi mewakili suara pelajar, memacu kecemerlangan akademik STPM, dan menyemarakkan komuniti pra-universiti di S.M.C.H. Kota Bharu.",
+  "description": "Persatuan Pelajar Tingkatan Enam (PETINAM) SMJK Chung Hwa Kelantan 2026/2027 merupakan Majlis Perwakilan Pelajar rasmi yang berdedikasi memacu kebajikan, kecemerlangan akademik STPM, kepimpinan siswa, dan menyemarakkan komuniti pra-universiti di S.M.C.H. Kota Bharu.",
   "highCommittee": [
     {
       "name": "Vannie Liew",
-      "role": "Presiden",
+      "role": "Pengerusi (Presiden)",
       "roleEn": "President",
       "class": "L6SB",
       "badge": "Council Head",
@@ -540,7 +540,7 @@ export const petinamTeam = {
     },
     {
       "name": "Jerry See Khai Chen",
-      "role": "Naib Presiden",
+      "role": "Naib Pengerusi (Naib Presiden)",
       "roleEn": "Vice President",
       "class": "L6A1",
       "badge": "Deputy Head",
@@ -596,126 +596,133 @@ export const petinamTeam = {
   ],
   "excoList": [
     {
+      "id": "exco-akademik",
       "name": "Michelle Tiu Mei Qi",
       "role": "Exco Akademik",
       "class": "L6A3",
       "icon": "📚",
       "color": "bg-[#bae6fd]",
-      "desc": "Kecemerlangan STPM, bank soalan ramalan, nota rujukan & bimbingan rakan sebaya."
+      "desc": "Kecemerlangan STPM, bimbingan rakan sebaya & penyelarasan modul soalan ramalan.",
+      "members": [
+        { "role": "Pengerusi", "name": "Michelle Tiu Mei Qi", "class": "L6A3" },
+        { "role": "N. Pengerusi", "name": "Lim En Tong", "class": "L6A3" },
+        { "role": "Setiausaha", "name": "Ashlinderjit", "class": "L6A2" },
+        { "role": "Bendahari", "name": "Tan Mei Ling", "class": "L6A2" }
+      ]
     },
     {
-      "name": "Lee Wen Lin",
-      "role": "Exco Kebajikan dan Kerohanian",
-      "class": "L6SB",
-      "icon": "🤝",
-      "color": "bg-[#fef08a]",
-      "desc": "Welfare pelajar, bantuan sokongan moral, dan program motivasi kendiri."
-    },
-    {
-      "name": "Lim Quan Qi",
-      "role": "Exco Komunikasi dan Media",
-      "class": "L6SP",
-      "icon": "📣",
-      "color": "bg-[#fbcfe8]",
-      "desc": "Penerbitan buletin berkala, liputan fotografi & pengurusan saluran media."
-    },
-    {
-      "name": "Phinthra Lee Siew Phing",
-      "role": "Exco Kesukarelawan dan Kemasyarakatan",
-      "class": "L6SB",
-      "icon": "🌱",
-      "color": "bg-[#bbf7d0]",
-      "desc": "Aktiviti kesukarelawanan, khidmat masyarakat & projek kelestarian sekolah."
-    },
-    {
+      "id": "exco-teknologi",
       "name": "Lee Jia Xuan",
       "role": "Exco Teknologi dan Inovasi",
       "class": "L6SP",
       "icon": "⚡",
       "color": "bg-[#fed7aa]",
-      "desc": "Portal digital Tingkatan 6, inovasi STEM & sokongan teknologi maklumat."
+      "desc": "Portal digital Tingkatan 6, inovasi STEM & sokongan teknologi maklumat sekolah.",
+      "members": [
+        { "role": "Pengerusi", "name": "Lee Jia Xuan", "class": "L6SP" },
+        { "role": "N. Pengerusi", "name": "Tong Soon Chen", "class": "L6A3" },
+        { "role": "Setiausaha", "name": "Tan Wei Zhe", "class": "L6A3" },
+        { "role": "Bendahari", "name": "Lee Tzi Nin", "class": "L6A1" }
+      ]
     },
     {
-      "name": "Max Ng Juo Yi",
-      "role": "Exco Sukan dan Rekreasi",
-      "class": "L6SB",
-      "icon": "🏆",
-      "color": "bg-[#e9d5ff]",
-      "desc": "Kejohanan sukan antara kelas, aktiviti riadah sihat & kecergasan fizikal."
-    },
-    {
+      "id": "exco-kebudayaan",
       "name": "Ou Guanle",
       "role": "Exco Kebudayaan dan Kesenian",
       "class": "L6A3",
       "icon": "🎨",
       "color": "bg-[#fecdd3]",
-      "desc": "Aktiviti silang budaya, persembahan seni tradisi & sambutan perayaan."
+      "desc": "Aktiviti silang budaya, apresiasi warisan tradisi & sambutan perayaan warga sekolah.",
+      "members": [
+        { "role": "N. Pengerusi", "name": "Ou Guanle", "class": "L6A3" },
+        { "role": "N. Pengerusi", "name": "Chua Yong Xing", "class": "L6A3" },
+        { "role": "Setiausaha", "name": "Tin Ming Zhe", "class": "L6A3" },
+        { "role": "Bendahari", "name": "Abang Abdul Rauf", "class": "L6A3" }
+      ]
     },
     {
+      "id": "exco-media",
+      "name": "Lim Xuan Qi",
+      "role": "Exco Komunikasi dan Media",
+      "class": "L6SP",
+      "icon": "📣",
+      "color": "bg-[#fbcfe8]",
+      "desc": "Penerbitan buletin berkala, liputan fotografi & pengurusan saluran media rasmi.",
+      "members": [
+        { "role": "Pengerusi", "name": "Lim Xuan Qi", "class": "L6SP" },
+        { "role": "N. Pengerusi", "name": "Lee Wan Mei", "class": "L6A1" },
+        { "role": "Setiausaha", "name": "Koh Jun Jie", "class": "L6A2" },
+        { "role": "Bendahari", "name": "Ismail Halim", "class": "L6A2" }
+      ]
+    },
+    {
+      "id": "exco-sukan",
+      "name": "Max Ng Juo Yi",
+      "role": "Exco Sukan dan Rekreasi",
+      "class": "L6SB",
+      "icon": "🏆",
+      "color": "bg-[#e9d5ff]",
+      "desc": "Kejohanan sukan antara kelas, aktiviti riadah sihat & kecergasan jasmani pelajar.",
+      "members": [
+        { "role": "Pengerusi", "name": "Max Ng Juo Yi", "class": "L6SB" },
+        { "role": "N. Pengerusi", "name": "Lee Khai Keat", "class": "L6A3" },
+        { "role": "Setiausaha", "name": "Kuik Jin Wen", "class": "L6A1" },
+        { "role": "Bendahari", "name": "Putthiphong Russamee", "class": "L6A3" }
+      ]
+    },
+    {
+      "id": "exco-kebajikan",
+      "name": "Lee Wen Lin",
+      "role": "Exco Kebajikan dan Kerohanian",
+      "class": "L6SB",
+      "icon": "🤝",
+      "color": "bg-[#fef08a]",
+      "desc": "Kebajikan pelajar, sokongan emosi & kerohanian, dan program bantuan rakan sebaya.",
+      "members": [
+        { "role": "Pengerusi", "name": "Lee Wen Lin", "class": "L6SB" },
+        { "role": "N. Pengerusi", "name": "Esther Choo Shi Yun", "class": "L6A3" },
+        { "role": "Setiausaha", "name": "Lim Phei Wen", "class": "L6A1" },
+        { "role": "Bendahari", "name": "Tan Lee Ying", "class": "L6A1" }
+      ]
+    },
+    {
+      "id": "exco-kesukarelawan",
+      "name": "Phinthra Lee Siew Phing",
+      "role": "Exco Kesukarelawan dan Kemasyarakatan",
+      "class": "L6SB",
+      "icon": "🌱",
+      "color": "bg-[#bbf7d0]",
+      "desc": "Aktiviti kesukarelawanan, khidmat masyarakat & projek kelestarian hijau sekolah.",
+      "members": [
+        { "role": "Pengerusi", "name": "Phinthra Lee Siew Phing", "class": "L6SB" },
+        { "role": "N. Pengerusi", "name": "Yeap Ching Fen", "class": "L6A1" },
+        { "role": "Setiausaha", "name": "Chiu Tze Yin", "class": "L6A1" },
+        { "role": "Bendahari", "name": "Kiong Chew Mei", "class": "L6A2" }
+      ]
+    },
+    {
+      "id": "exco-hubungan",
       "name": "Tan Ying Xing",
       "role": "Exco Hubungan Luar dan Antarabangsa",
-      "class": "L6SP",
+      "class": "L6SB",
       "icon": "🌐",
       "color": "bg-[#c7d2fe]",
-      "desc": "Jaringan kerjasama antara sekolah PPD Kota Bharu & pendedahan global."
+      "desc": "Jaringan kerjasama antara sekolah PPD Kota Bharu & pendedahan peringkat global.",
+      "members": [
+        { "role": "Pengerusi", "name": "Tan Ying Xing", "class": "L6SB" },
+        { "role": "N. Pengerusi", "name": "Foo Yuh Hwai", "class": "L6A1" },
+        { "role": "Setiausaha", "name": "Ooi Shin Mei", "class": "L6A3" },
+        { "role": "Bendahari", "name": "Ong Yea Fang", "class": "L6A3" }
+      ]
     }
   ],
   "committee": [
-    {
-      "name": "Vannie Liew",
-      "role": "Presiden",
-      "roleEn": "President",
-      "class": "L6SB",
-      "badge": "Council Head",
-      "quote": "Menerajui PETINAM dengan integriti, membawa suara dan aspirasi pelajar Tingkatan 6 terus ke pihak pentadbiran sekolah.",
-      "avatar": "👩‍💼",
-      "isPresident": true
-    },
-    {
-      "name": "Jerry See Khai Chen",
-      "role": "Naib Presiden",
-      "roleEn": "Vice President",
-      "class": "L6A1",
-      "badge": "Deputy Head",
-      "quote": "Memastikan kebajikan, keselesaan pembelajaran, dan ukhuwah warga Tingkatan 6 sentiasa terpelihara.",
-      "avatar": "👨‍💼"
-    },
-    {
-      "name": "Tan Yon Jian",
-      "role": "Setiausaha",
-      "roleEn": "Secretary",
-      "class": "L6SP",
-      "badge": "Documentation",
-      "quote": "Pengurusan surat-menyurat telus, minit mesyuarat tersusun, dan penyampaian notis rasmi yang pantas.",
-      "avatar": "🧑‍💻"
-    },
-    {
-      "name": "Sit Kenneth",
-      "role": "Penolong Setiausaha",
-      "roleEn": "Asst. Secretary",
-      "class": "L6A1",
-      "badge": "Archives",
-      "quote": "Menyelaras arkib dokumen digital persatuan dan membantu pengurusan pentadbiran harian.",
-      "avatar": "📝"
-    },
-    {
-      "name": "Kor Lewis",
-      "role": "Bendahari",
-      "roleEn": "Treasurer",
-      "class": "L6A3",
-      "badge": "Finance Lead",
-      "quote": "Pengurusan dana dan perancangan belanjawan yang berhemah demi menyokong setiap program pelajar.",
-      "avatar": "💰"
-    },
-    {
-      "name": "Joane Theng Zhi En",
-      "role": "Penolong Bendahari",
-      "roleEn": "Asst. Treasurer",
-      "class": "L6SB",
-      "badge": "Finance Audit",
-      "quote": "Memastikan ketepatan kira-kira kewangan dan ketelusan audit perbelanjaan aktiviti persatuan.",
-      "avatar": "📊"
-    }
+    { "name": "Vannie Liew", "role": "Pengerusi (Presiden)", "class": "L6SB", "group": "Majlis Tertinggi", "badge": "Council Head", "quote": "Menerajui PETINAM dengan integriti, membawa suara dan aspirasi pelajar Tingkatan 6 terus ke pihak pentadbiran sekolah.", "avatar": "👩‍💼", "isPresident": true },
+    { "name": "Jerry See Khai Chen", "role": "Naib Pengerusi (Naib Presiden)", "class": "L6A1", "group": "Majlis Tertinggi", "badge": "Deputy Head", "quote": "Memastikan kebajikan, keselesaan pembelajaran, dan ukhuwah warga Tingkatan 6 sentiasa terpelihara.", "avatar": "👨‍💼" },
+    { "name": "Tan Yon Jian", "role": "Setiausaha", "class": "L6SP", "group": "Majlis Tertinggi", "badge": "Documentation", "quote": "Pengurusan surat-menyurat telus, minit mesyuarat tersusun, dan penyampaian notis rasmi yang pantas.", "avatar": "🧑‍💻" },
+    { "name": "Sit Kenneth", "role": "Penolong Setiausaha", "class": "L6A1", "group": "Majlis Tertinggi", "badge": "Archives", "quote": "Menyelaras arkib dokumen digital persatuan dan membantu pengurusan pentadbiran harian.", "avatar": "📝" },
+    { "name": "Kor Lewis", "role": "Bendahari", "class": "L6A3", "group": "Majlis Tertinggi", "badge": "Finance Lead", "quote": "Pengurusan dana dan perancangan belanjawan yang berhemah demi menyokong setiap program pelajar.", "avatar": "💰" },
+    { "name": "Joane Theng Zhi En", "role": "Penolong Bendahari", "class": "L6SB", "group": "Majlis Tertinggi", "badge": "Finance Audit", "quote": "Memastikan ketepatan kira-kira kewangan dan ketelusan audit perbelanjaan aktiviti persatuan.", "avatar": "📊" }
   ],
   "manifestos": [
     "Digital Resource Centralization: Making all past papers and notes free & 1-click accessible.",
